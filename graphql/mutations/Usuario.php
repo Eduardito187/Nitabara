@@ -22,7 +22,7 @@ $Usuario=[
                     'ID'=>NULL,
                     'Usuario'=>$id_cuenta,
                     'Log'=>true,
-                    'IP'=>$PublicUser->getUserIp(),
+                    'IP'=>"192.168.0.1",
                     'FechaCreado'=>date("Y-m-d h:i:s")
                 ]);
                 $x=$History->save();
