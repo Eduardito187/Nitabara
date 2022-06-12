@@ -8,9 +8,9 @@ $capsule = new Capsule;
 $capsule->addConnection([
     'driver' => 'mysql',
     'host' => 'localhost',
-    'database' => '',
-    'username' => '',
-    'password' => '',
+    'database' => 'u960392013_nitabara',
+    'username' => 'u960392013_nitabara',
+    'password' => 'NitaBaraProyecto_Grado123',
     'charset' => 'utf8',
     'collation' => 'utf8_unicode_ci',
     'prefix' => '',
