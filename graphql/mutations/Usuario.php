@@ -20,7 +20,7 @@ function getUserIp(){
     else
         $ipaddress = 'UNKNOWN';    
     return $ipaddress;
- }
+}
 
 $Usuario=[
     'validacion_login'=>[
