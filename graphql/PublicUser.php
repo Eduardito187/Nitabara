@@ -1,6 +1,6 @@
 <?php
 class PublicUser{
-    public function getUserIp(){
+    function getUserIp(){
         $ipaddress = '';
         if (isset($_SERVER['HTTP_CLIENT_IP']))
             $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
