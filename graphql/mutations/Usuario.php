@@ -21,8 +21,8 @@ $Usuario=[
                 $History=new HistorialLog([
                     'ID'=>NULL,
                     'Usuario'=>$id_cuenta,
-                    'Log'=>"El usuario <strong>".$args["Usuario"]."</strong> se logueo al sistema.",
-                    'IP'=>"192.168.0.1",
+                    'Log'=>true,
+                    'IP'=>$PublicUser->getUserIp(),
                     'FechaCreado'=>date("Y-m-d h:i:s")
                 ]);
                 $x=$History->save();
