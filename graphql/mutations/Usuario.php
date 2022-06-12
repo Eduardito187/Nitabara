@@ -37,7 +37,6 @@ $Usuario=[
             if ($cuenta!=null) {
                 $v=true;
                 $id_cuenta=$cuenta->ID;
-                $PublicUser=new PublicUser;
                 $History=new HistorialLog([
                     'ID'=>NULL,
                     'Usuario'=>$id_cuenta,
