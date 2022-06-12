@@ -10,7 +10,7 @@ $Usuario=[
         ],
         'resolve'=>function($root,$args){
             $pwd=md5($args["Contra"]);
-            $cuenta=Usuario::where('Usuario',$args["usuario"])->where('Pwd',$pwd)->first();
+            $cuenta=Usuario::where('Usuario',$args["Usuario"])->where('Pwd',$pwd)->first();
             $v=false;
             $id_cuenta=0;
             if ($cuenta!=null) {
