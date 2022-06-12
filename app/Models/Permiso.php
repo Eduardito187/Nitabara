@@ -4,6 +4,6 @@ use Illuminate\Database\Eloquent\Model;
 class Permiso extends Model{
     protected $table="permisos";
     public $timestamps=false;
-    protected $fillable = ['ID','Cod','FechaCreado','FechaActualizado','FechaEliminado'];
+    protected $fillable = ['ID','Cod','Nombre','FechaCreado','FechaActualizado','FechaEliminado'];
 }
 ?>
