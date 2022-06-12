@@ -2,8 +2,6 @@
 use App\Models\Usuario;
 use App\Models\HistorialLog;
 use GraphQL\Type\Definition\Type;
-require('./../PublicUser.php');
-
 $Usuario=[
     'validacion_login'=>[
         'type'=>$validacionLoginType,
