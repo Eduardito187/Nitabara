@@ -2,6 +2,26 @@
 use App\Models\Usuario;
 use App\Models\HistorialLog;
 use GraphQL\Type\Definition\Type;
+
+function getUserIp(){
+    $ipaddress = '';
+    if (isset($_SERVER['HTTP_CLIENT_IP']))
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED'];
+    else if(isset($_SERVER['REMOTE_ADDR']))
+        $ipaddress = $_SERVER['REMOTE_ADDR'];
+    else
+        $ipaddress = 'UNKNOWN';    
+    return $ipaddress;
+ }
+
 $Usuario=[
     'validacion_login'=>[
         'type'=>$validacionLoginType,
@@ -22,7 +42,7 @@ $Usuario=[
                     'ID'=>NULL,
                     'Usuario'=>$id_cuenta,
                     'Log'=>true,
-                    'IP'=>"192.168.0.1",
+                    'IP'=>getUserIp(),
                     'FechaCreado'=>date("Y-m-d h:i:s")
                 ]);
                 $x=$History->save();

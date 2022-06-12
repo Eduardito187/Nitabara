@@ -3,7 +3,6 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
 require('mutations/Usuario.php');
-require('PublicUser.php');
 
 $mutations=array();
 $mutations+=$Usuario;
