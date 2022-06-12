@@ -1,6 +1,9 @@
 <?php
 use App\Models\Usuario;
+use App\Models\HistorialLog;
 use GraphQL\Type\Definition\Type;
+require('./../PublicUser.php');
+
 $Usuario=[
     'validacion_login'=>[
         'type'=>$validacionLoginType,
@@ -16,6 +19,15 @@ $Usuario=[
             if ($cuenta!=null) {
                 $v=true;
                 $id_cuenta=$cuenta->ID;
+                $PublicUser=new PublicUser;
+                $History=new HistorialLog([
+                    'ID'=>NULL,
+                    'Usuario'=>$id_cuenta,
+                    'Log'=>"El usuario <strong>".$args["Usuario"]."</strong> se logueo al sistema.",
+                    'IP'=>$PublicUser->getUserIp(),
+                    'FechaCreado'=>date("Y-m-d h:i:s")
+                ]);
+                $x=$History->save();
             }
             return array("estado"=>$v,"id_cuenta"=>$id_cuenta);
         }
