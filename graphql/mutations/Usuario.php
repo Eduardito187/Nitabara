@@ -26,8 +26,8 @@ $Usuario=[
     'validacion_login'=>[
         'type'=>$validacionLoginType,
         'args'=>[
-            'Usuario'=>Type::string(),
-            'Contra'=>Type::string()
+            'Usuario'=>Type::nonNull(Type::string()),
+            'Contra'=>Type::nonNull(Type::string())
         ],
         'resolve'=>function($root,$args){
             $pwd=md5($args["Contra"]);
