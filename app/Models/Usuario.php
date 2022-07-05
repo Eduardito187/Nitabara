@@ -5,6 +5,7 @@ use App\Models\Foto;
 use App\Models\Administrativo;
 use App\Models\HistorialLog;
 use App\Models\UsuarioRol;
+use App\Models\Persona;
 class Usuario extends Model{
     protected $table="usuario";
     public $timestamps=false;
@@ -20,6 +21,9 @@ class Usuario extends Model{
     }
     public function usuario_rol(){
         return $this->hasMany(UsuarioRol::class,'Usuario','ID');
+    }
+    public function persona(){
+        return $this->hasOne(Persona::class,'Usuario','ID');
     }
 }
 ?>
