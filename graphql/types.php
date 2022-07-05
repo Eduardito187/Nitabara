@@ -16,7 +16,7 @@ $validacionLoginType=new ObjectType([
 $UsuarioType=new ObjectType([
     'name' => 'UsuarioType',
     'description' => 'Se valida el inicio al sistema',
-    'fields' => function () use(&$FOTO_Type,&$USUARIO_ROL_Type,&$ADMINISTRATIVO_Type,&$HISTORIAL_LOG_Type){
+    'fields' => function () use(&$Persona_Type,&$FOTO_Type,&$USUARIO_ROL_Type,&$ADMINISTRATIVO_Type,&$HISTORIAL_LOG_Type){
         return [
             'ID'=>Type::int(),
             'Usuario'=>Type::string(),
@@ -68,6 +68,17 @@ $UsuarioType=new ObjectType([
                     return $data->historial_log->toArray();
                 }
             ],
+            'Persona'=>[
+                "type" => $Persona_Type,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Usuario::where('ID', $id)->with(['persona'])->first();
+                    if ($data->persona==null) {
+                        return null;
+                    }
+                    return $data->persona->toArray();
+                }
+            ],
         ];
     }
 ]);
@@ -94,6 +105,27 @@ $ADMINISTRATIVO_Type=new ObjectType([
         'ID'=>Type::int(),
         'Usuario'=>Type::string(),
         'Persona'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$Persona_Type=new ObjectType([
+    'name' => 'Persona_Type',
+    'description' => 'Data Persona',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Nombre'=>Type::string(),
+        'Paterno'=>Type::string(),
+        'Materno'=>Type::string(),
+        'Correo'=>Type::string(),
+        'Telefono'=>Type::string(),
+        'Nacimiento'=>Type::string(),
+        'TipoDocumento'=>Type::int(),
+        'Direccion'=>Type::string(),
+        'Ciudad'=>Type::string(),
+        'Usuario'=>Type::int(),
         'FechaCreado'=>Type::string(),
         'FechaActualizado'=>Type::string(),
         'FechaEliminado'=>Type::string()
