@@ -5,7 +5,7 @@ use App\Models\Usuario;
 $rootQuery=new ObjectType([
     'name'=>'Query',
     'fields'=>[
-        'usuario'=>[
+        'Usuario'=>[
             'type'=>$UsuarioType,
             'args'=>[
                 'ID'=>Type::nonNull(Type::int())
