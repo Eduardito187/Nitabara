@@ -156,11 +156,11 @@ $USUARIO_ROL_Type=new ObjectType([
                 "type" => $ROL_Type,
                 "resolve" => function ($root, $args) {
                     $id = $root['ID'];
-                    $data = UsuarioRol::where('ID', $id)->with(['rol'])->first();
-                    if ($data->rol==null) {
+                    $data = UsuarioRol::where('ID', $id)->with(['rols'])->first();
+                    if ($data->rols==null) {
                         return null;
                     }
-                    return $data->rol->toArray();
+                    return $data->rols->toArray();
                 }
             ],
             'Usuario'=>[
