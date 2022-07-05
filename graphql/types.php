@@ -2,6 +2,7 @@
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use App\Models\Usuario;
+use App\Models\UsuarioRol;
 
 $validacionLoginType=new ObjectType([
     'name' => 'Validacion_de_Login',
@@ -116,14 +117,36 @@ $HISTORIAL_LOG_Type=new ObjectType([
 $USUARIO_ROL_Type=new ObjectType([
     'name' => 'USUARIO_ROL_Type',
     'description' => 'Data USUARIO ROL',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Rol'=>Type::int(),
-        'Usuario'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$ROL_Type,&$UsuarioType){
+        return [
+            'ID'=>Type::int(),
+            'Rol'=>[
+                "type" => $ROL_Type,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = UsuarioRol::where('ID', $id)->with(['rol'])->first();
+                    if ($data->rol==null) {
+                        return null;
+                    }
+                    return $data->rol->toArray();
+                }
+            ],
+            'Usuario'=>[
+                "type" => $UsuarioType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = UsuarioRol::where('ID', $id)->with(['usuario'])->first();
+                    if ($data->usuario==null) {
+                        return null;
+                    }
+                    return $data->usuario->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $ROL_Type=new ObjectType([
