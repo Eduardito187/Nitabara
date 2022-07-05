@@ -8,7 +8,7 @@ class UsuarioRol extends Model{
     public $timestamps=false;
     protected $fillable = ['ID','Rol','Usuario','FechaCreado','FechaActualizado','FechaEliminado'];
     public function rol(){
-        return $this->hasOne(Rol::class,'ID','Usuario');
+        return $this->hasOne(Rol::class,'ID','Rol');
     }
     public function usuario(){
         return $this->hasOne(Usuario::class,'ID','Usuario');
