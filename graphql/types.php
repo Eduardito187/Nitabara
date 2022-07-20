@@ -1,4 +1,6 @@
 <?php
+
+use App\Models\Persona;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use App\Models\Usuario;
@@ -253,23 +255,65 @@ $ExamenesPagosType=new ObjectType([
 $PersonaType=new ObjectType([
     'name' => 'PersonaType',
     'description' => 'Data Persona',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Nombre'=>Type::string(),
-        'Paterno'=>Type::string(),
-        'Materno'=>Type::string(),
-        'CI'=>Type::string(),
-        'Correo'=>Type::string(),
-        'Telefono'=>Type::string(),
-        'Nacimiento'=>Type::string(),
-        'TipoDocumento'=>Type::int(),
-        'Direccion'=>Type::string(),
-        'Ciudad'=>Type::string(),
-        'Usuario'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$TipoDocumentoType,&$DireccionType,&$CiudadType,&$UsuarioType){
+        return [
+            'ID'=>Type::int(),
+            'Nombre'=>Type::string(),
+            'Paterno'=>Type::string(),
+            'Materno'=>Type::string(),
+            'CI'=>Type::string(),
+            'Correo'=>Type::string(),
+            'Telefono'=>Type::string(),
+            'Nacimiento'=>Type::string(),
+            'TipoDocumento'=>[
+                "type" => $TipoDocumentoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Persona::where('ID', $id)->with(['tipo_documento_r'])->first();
+                    if ($data->tipo_documento_r==null) {
+                        return null;
+                    }
+                    return $data->tipo_documento_r->toArray();
+                }
+            ],
+            'Direccion'=>[
+                "type" => $DireccionType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Persona::where('ID', $id)->with(['direccion_r'])->first();
+                    if ($data->direccion_r==null) {
+                        return null;
+                    }
+                    return $data->direccion_r->toArray();
+                }
+            ],
+            'Ciudad'=>[
+                "type" => $CiudadType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Persona::where('ID', $id)->with(['ciudad_r'])->first();
+                    if ($data->ciudad_r==null) {
+                        return null;
+                    }
+                    return $data->ciudad_r->toArray();
+                }
+            ],
+            'Usuario'=>[
+                "type" => $UsuarioType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Persona::where('ID', $id)->with(['usuario_r'])->first();
+                    if ($data->usuario_r==null) {
+                        return null;
+                    }
+                    return $data->usuario_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $HistorialLogType=new ObjectType([
