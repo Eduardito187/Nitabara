@@ -13,16 +13,18 @@ $validacionLoginType=new ObjectType([
     ]
 ]);
 
+
+
 $UsuarioType=new ObjectType([
     'name' => 'UsuarioType',
     'description' => 'Se valida el inicio al sistema',
-    'fields' => function () use(&$Persona_Type,&$FOTO_Type,&$USUARIO_ROL_Type,&$ADMINISTRATIVO_Type,&$HISTORIAL_LOG_Type){
+    'fields' => function () use(&$PersonaType,&$FotoType,&$UsuarioRolType,&$AdministrativoType,&$HistorialLogType){
         return [
             'ID'=>Type::int(),
             'Usuario'=>Type::string(),
             'Pwd'=>Type::string(),
             'Perfil'=>[
-                "type" => $FOTO_Type,
+                "type" => $FotoType,
                 "resolve" => function ($root, $args) {
                     $id = $root['ID'];
                     $data = Usuario::where('ID', $id)->with(['foto'])->first();
@@ -36,7 +38,7 @@ $UsuarioType=new ObjectType([
             'FechaActualizado'=>Type::string(),
             'FechaEliminado'=>Type::string(),
             'Roles'=>[
-                "type" => Type::listOf($USUARIO_ROL_Type),
+                "type" => Type::listOf($UsuarioRolType),
                 "resolve" => function ($root, $args) {
                     $id = $root['ID'];
                     $data = Usuario::where('ID', $id)->with(['usuario_rol'])->first();
@@ -47,7 +49,7 @@ $UsuarioType=new ObjectType([
                 }
             ],
             'Administrativo'=>[
-                "type" => $ADMINISTRATIVO_Type,
+                "type" => $AdministrativoType,
                 "resolve" => function ($root, $args) {
                     $id = $root['ID'];
                     $data = Usuario::where('ID', $id)->with(['administrativo'])->first();
@@ -58,7 +60,7 @@ $UsuarioType=new ObjectType([
                 }
             ],
             'HistorialLog'=>[
-                "type" => Type::listOf($HISTORIAL_LOG_Type),
+                "type" => Type::listOf($HistorialLogType),
                 "resolve" => function ($root, $args) {
                     $id = $root['ID'];
                     $data = Usuario::where('ID', $id)->with(['historial_log'])->first();
@@ -69,7 +71,7 @@ $UsuarioType=new ObjectType([
                 }
             ],
             'Persona'=>[
-                "type" => $Persona_Type,
+                "type" => $PersonaType,
                 "resolve" => function ($root, $args) {
                     $id = $root['ID'];
                     $data = Usuario::where('ID', $id)->with(['persona'])->first();
@@ -83,8 +85,8 @@ $UsuarioType=new ObjectType([
     }
 ]);
 
-$FOTO_Type=new ObjectType([
-    'name' => 'FOTO_Type',
+$FotoType=new ObjectType([
+    'name' => 'FotoType',
     'description' => 'Data FOTO',
     'fields'=>[
         'ID'=>Type::int(),
@@ -98,9 +100,9 @@ $FOTO_Type=new ObjectType([
     ]
 ]);
 
-$ADMINISTRATIVO_Type=new ObjectType([
-    'name' => 'ADMINISTRATIVO_Type',
-    'description' => 'Data ADMINISTRATIVO',
+$AdministrativoType=new ObjectType([
+    'name' => 'AdministrativoType',
+    'description' => 'AdministrativoType',
     'fields'=>[
         'ID'=>Type::int(),
         'Usuario'=>Type::string(),
@@ -111,14 +113,152 @@ $ADMINISTRATIVO_Type=new ObjectType([
     ]
 ]);
 
-$Persona_Type=new ObjectType([
-    'name' => 'Persona_Type',
+$BarrioType=new ObjectType([
+    'name' => 'BarrioType',
+    'description' => 'BarrioType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Nombre'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$CirugiaType=new ObjectType([
+    'name' => 'CirugiaType',
+    'description' => 'CirugiaType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Persona'=>Type::int(),
+        'Descripcion'=>Type::string(),
+        'Medico'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$CirugiaPagoType=new ObjectType([
+    'name' => 'CirugiaType',
+    'description' => 'CirugiaPagoType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Cirugia'=>Type::int(),
+        'Pago'=>Type::int(),
+        'Total'=>Type::float(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$CiudadType=new ObjectType([
+    'name' => 'CiudadType',
+    'description' => 'CiudadType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Ciudad'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$ConsultaType=new ObjectType([
+    'name' => 'ConsultaType',
+    'description' => 'ConsultaType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Medico'=>Type::int(),
+        'Descripcion'=>Type::string(),
+        'Hora'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$ConsultaPagoType=new ObjectType([
+    'name' => 'ConsultaPagoType',
+    'description' => 'ConsultaPagoType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Pago'=>Type::int(),
+        'Consulta'=>Type::int(),
+        'Descripcion'=>Type::string(),
+        'Total'=>Type::float(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$DireccionType=new ObjectType([
+    'name' => 'DireccionType',
+    'description' => 'DireccionType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Zona'=>Type::int(),
+        'Barrio'=>Type::int(),
+        'Calle'=>Type::string(),
+        'Casa'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$EspecialidadType=new ObjectType([
+    'name' => 'EspecialidadType',
+    'description' => 'EspecialidadType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Nombre'=>Type::string(),
+        'Descripcion'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$ExamenesMedicosType=new ObjectType([
+    'name' => 'ExamenesMedicosType',
+    'description' => 'ExamenesMedicosType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Persona'=>Type::int(),
+        'Descripcion'=>Type::string(),
+        'Medico'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$ExamenesPagosType=new ObjectType([
+    'name' => 'ExamenesPagosType',
+    'description' => 'ExamenesPagosType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Examen'=>Type::int(),
+        'Pago'=>Type::int(),
+        'Total'=>Type::float(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PersonaType=new ObjectType([
+    'name' => 'PersonaType',
     'description' => 'Data Persona',
     'fields'=>[
         'ID'=>Type::int(),
         'Nombre'=>Type::string(),
         'Paterno'=>Type::string(),
         'Materno'=>Type::string(),
+        'CI'=>Type::string(),
         'Correo'=>Type::string(),
         'Telefono'=>Type::string(),
         'Nacimiento'=>Type::string(),
@@ -132,8 +272,8 @@ $Persona_Type=new ObjectType([
     ]
 ]);
 
-$HISTORIAL_LOG_Type=new ObjectType([
-    'name' => 'HISTORIAL_LOG_Type',
+$HistorialLogType=new ObjectType([
+    'name' => 'HistorialLogType',
     'description' => 'Data HISTORIAL LOG',
     'fields'=>[
         'ID'=>Type::int(),
@@ -146,14 +286,14 @@ $HISTORIAL_LOG_Type=new ObjectType([
     ]
 ]);
 
-$USUARIO_ROL_Type=new ObjectType([
-    'name' => 'USUARIO_ROL_Type',
+$UsuarioRolType=new ObjectType([
+    'name' => 'UsuarioRolType',
     'description' => 'Data USUARIO ROL',
-    'fields' => function () use(&$ROL_Type,&$UsuarioType){
+    'fields' => function () use(&$RolType,&$UsuarioType){
         return [
             'ID'=>Type::int(),
             'Rol'=>[
-                "type" => $ROL_Type,
+                "type" => $RolType,
                 "resolve" => function ($root, $args) {
                     $id = $root['ID'];
                     $data = UsuarioRol::where('ID', $id)->with(['rols'])->first();
@@ -181,12 +321,219 @@ $USUARIO_ROL_Type=new ObjectType([
     }
 ]);
 
-$ROL_Type=new ObjectType([
-    'name' => 'ROL_Type',
+$RolType=new ObjectType([
+    'name' => 'RolType',
     'description' => 'Data ROL',
     'fields'=>[
         'ID'=>Type::int(),
         'Rol'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$HistoriaClinicaType=new ObjectType([
+    'name' => 'HistoriaClinicaType',
+    'description' => 'HistoriaClinicaType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Persona'=>Type::int(),
+        'Tipo'=>Type::int(),
+        'Medico'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$MedicoType=new ObjectType([
+    'name' => 'MedicoType',
+    'description' => 'MedicoType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Persona'=>Type::int(),
+        'Especialidad'=>Type::int(),
+        'Usuario'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PagoType=new ObjectType([
+    'name' => 'PagoType',
+    'description' => 'PagoType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Monto'=>Type::float(),
+        'Administrativo'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PagoPrecioType=new ObjectType([
+    'name' => 'PagoPrecioType',
+    'description' => 'PagoPrecioType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Pago'=>Type::int(),
+        'Precio'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PermisoType=new ObjectType([
+    'name' => 'PermisoType',
+    'description' => 'PermisoType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Nombre'=>Type::string(),
+        'Codigo'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PersonaCirugiaType=new ObjectType([
+    'name' => 'PersonaCirugiaType',
+    'description' => 'PersonaCirugiaType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Persona'=>Type::int(),
+        'Cirugia'=>Type::int(),
+        'HoraAtencion'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PersonaConsultaType=new ObjectType([
+    'name' => 'PersonaConsultaType',
+    'description' => 'PersonaConsultaType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Persona'=>Type::int(),
+        'Consulta'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PersonaExamenType=new ObjectType([
+    'name' => 'PersonaExamenType',
+    'description' => 'PersonaExamenType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Persona'=>Type::int(),
+        'Examen'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PrecioType=new ObjectType([
+    'name' => 'PrecioType',
+    'description' => 'PrecioType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Monto'=>Type::float(),
+        'Tipo'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$PrecioTipoType=new ObjectType([
+    'name' => 'PrecioTipoType',
+    'description' => 'PrecioTipoType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Tipo'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$RolType=new ObjectType([
+    'name' => 'RolType',
+    'description' => 'RolType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Rol'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$RolPermisoType=new ObjectType([
+    'name' => 'RolPermisoType',
+    'description' => 'RolPermisoType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Rol'=>Type::int(),
+        'Permiso'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$TipoDocumentoType=new ObjectType([
+    'name' => 'TipoDocumentoType',
+    'description' => 'TipoDocumentoType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Tipo'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$TipoHistoriaType=new ObjectType([
+    'name' => 'TipoHistoriaType',
+    'description' => 'TipoHistoriaType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Tipo'=>Type::int(),
+        'Glosa'=>Type::string(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$UsuarioRolType=new ObjectType([
+    'name' => 'UsuarioRolType',
+    'description' => 'UsuarioRolType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Rol'=>Type::int(),
+        'Usuario'=>Type::int(),
+        'FechaCreado'=>Type::string(),
+        'FechaActualizado'=>Type::string(),
+        'FechaEliminado'=>Type::string()
+    ]
+]);
+
+$ZonaType=new ObjectType([
+    'name' => 'ZonaType',
+    'description' => 'ZonaType',
+    'fields'=>[
+        'ID'=>Type::int(),
+        'Nombre'=>Type::string(),
         'FechaCreado'=>Type::string(),
         'FechaActualizado'=>Type::string(),
         'FechaEliminado'=>Type::string()

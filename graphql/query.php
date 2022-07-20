@@ -12,6 +12,16 @@ $rootQuery=new ObjectType([
             ],
             'resolve'=>function($root,$args){
                 $data=Usuario::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
+                return $data;
+            }
+        ],
+        'Usuarios'=>[
+            'type'=>Type::listOf($UsuarioType),
+            'resolve'=>function($root,$args){
+                $data=Usuario::get()->toArray();
                 return $data;
             }
         ],
