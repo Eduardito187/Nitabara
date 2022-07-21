@@ -56,7 +56,7 @@ $rootQuery=new ObjectType([
                 $data=TipoDocumento::get()->toArray();
                 return $data;
             }
-        ],
+        ]
     ]
 ]);
 ?>
