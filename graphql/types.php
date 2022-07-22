@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Direccion;
 use App\Models\Persona;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -206,16 +207,38 @@ $ConsultaPagoType=new ObjectType([
 $DireccionType=new ObjectType([
     'name' => 'DireccionType',
     'description' => 'DireccionType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Zona'=>Type::int(),
-        'Barrio'=>Type::int(),
-        'Calle'=>Type::string(),
-        'Casa'=>Type::string(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$ZonaType,&$BarrioType){
+        return [
+            'ID'=>Type::int(),
+            'Zona'=>[
+                "type" => $ZonaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Direccion::where('ID', $id)->with(['zona_r'])->first();
+                    if ($data->zona_r==null) {
+                        return null;
+                    }
+                    return $data->zona_r->toArray();
+                }
+            ],
+            'Barrio'=>[
+                "type" => $BarrioType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Direccion::where('ID', $id)->with(['barrio_r'])->first();
+                    if ($data->barrio_r==null) {
+                        return null;
+                    }
+                    return $data->barrio_r->toArray();
+                }
+            ],
+            'Calle'=>Type::string(),
+            'Casa'=>Type::string(),
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $EspecialidadType=new ObjectType([
