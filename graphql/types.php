@@ -15,6 +15,13 @@ $validacionLoginType=new ObjectType([
     ]
 ]);
 
+$ResponseType=new ObjectType([
+    'name' => 'ResponseType',
+    'description' => 'ResponseType',
+    'fields'=>[
+        'response'=>Type::boolean(),
+    ]
+]);
 
 
 $UsuarioType=new ObjectType([

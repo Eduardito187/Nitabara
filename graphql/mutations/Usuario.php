@@ -1,5 +1,8 @@
 <?php
+
+use App\Models\Persona;
 use App\Models\Usuario;
+use App\Models\Direccion;
 use GraphQL\Type\Definition\Type;
 
 function getUserIp(){
@@ -48,6 +51,86 @@ $Usuario=[
                 */
             }
             return array("estado"=>$v,"id_cuenta"=>$id_cuenta);
+        }
+    ],
+    'Registrar_Usuario'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'Email'=>Type::nonNull(Type::string()),
+            'Telefono'=>Type::nonNull(Type::string()),
+            'barrio'=>Type::nonNull(Type::int()),
+            'calle'=>Type::nonNull(Type::string()),
+            'casa'=>Type::nonNull(Type::string()),
+            'ci'=>Type::nonNull(Type::string()),
+            'ciudad'=>Type::nonNull(Type::int()),
+            'contra'=>Type::nonNull(Type::string()),
+            'documento'=>Type::nonNull(Type::int()),
+            'materno'=>Type::nonNull(Type::string()),
+            'paterno'=>Type::nonNull(Type::string()),
+            'nombre'=>Type::nonNull(Type::string()),
+            'usuario'=>Type::nonNull(Type::string()),
+            'zona'=>Type::nonNull(Type::int()),
+            'nacimiento'=>Type::nonNull(Type::string())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $user=new Usuario([
+                'ID'=>NULL,
+                'Usuario'=>$args["usuario"],
+                'Pwd'=>md5($args["contra"]),
+                'Perfil'=>1,
+                'FechaCreado'=>$date_ahora,
+                'FechaActualizado'=>NULL,
+                'FechaEliminado'=>NULL
+            ]);
+            $x=$user->save();
+
+            $INFO = Usuario::where('Pwd', md5($args["contra"]))->where('FechaCreado',$date_ahora)->get()->toArray();
+            if ($INFO==null) {
+                return array("response"=>false);
+            }
+            $cod_ID=$INFO[0]["ID"];
+
+            $date_ahora_d=date("Y-m-d h:i:s");
+            $dir=new Direccion([
+                'ID'=>NULL,
+                'Zona'=>$args["zona"],
+                'Barrio'=>$args["barrio"],
+                'Calle'=>$args["calle"],
+                'Casa'=>$args["casa"],
+                'FechaCreado'=>$date_ahora_d,
+                'FechaActualizado'=>NULL,
+                'FechaEliminado'=>NULL
+            ]);
+            $x=$dir->save();
+
+            $Dir = Direccion::where('Casa', $args["casa"])->where('FechaCreado',$date_ahora_d)->get()->toArray();
+            if ($Dir==null) {
+                return array("response"=>false);
+            }
+            $cod__DIR_ID=$Dir[0]["ID"];
+
+            $date_ahora_p=date("Y-m-d h:i:s");
+            $persona=new Persona([
+                'ID'=>NULL,
+                'Nombre'=>$args["nombre"],
+                'Paterno'=>$args["paterno"],
+                'Materno'=>$args["materno"],
+                'CI'=>$args["ci"],
+                'Correo'=>$args["Email"],
+                'Telefono'=>$args["Telefono"],
+                'Nacimiento'=>$args["nacimiento"],
+                'TipoDocumento'=>$args["documento"],
+                'Direccion'=>$cod__DIR_ID,
+                'Ciudad'=>$args["ciudad"],
+                'Usuario'=>$cod_ID,
+                'FechaCreado'=>$date_ahora_p,
+                'FechaActualizado'=>NULL,
+                'FechaEliminado'=>NULL
+            ]);
+            $x=$persona->save();
+
+            return array("response"=>true);
         }
     ],
 ]
