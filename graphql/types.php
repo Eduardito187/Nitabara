@@ -6,6 +6,8 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use App\Models\Usuario;
 use App\Models\UsuarioRol;
+use App\Models\Rol;
+use App\Models\RolPermiso;
 
 $validacionLoginType=new ObjectType([
     'name' => 'Validacion_de_Login',
@@ -398,13 +400,26 @@ $UsuarioRolType=new ObjectType([
 $RolType=new ObjectType([
     'name' => 'RolType',
     'description' => 'Data ROL',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Rol'=>Type::string(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$RolPermisoType){
+        return [
+            'ID'=>Type::int(),
+            'Rol'=>Type::string(),
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string(),
+            'RolPermiso'=>[
+                "type" => Type::listOf($RolPermisoType),
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Rol::where('ID', $id)->with(['rol_permiso_r'])->first();
+                    if ($data->rol_permiso_r==null) {
+                        return null;
+                    }
+                    return $data->rol_permiso_r->toArray();
+                }
+            ],
+        ];
+    }
 ]);
 
 $HistoriaClinicaType=new ObjectType([
@@ -464,14 +479,27 @@ $PagoPrecioType=new ObjectType([
 $PermisoType=new ObjectType([
     'name' => 'PermisoType',
     'description' => 'PermisoType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Nombre'=>Type::string(),
-        'Codigo'=>Type::string(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$RolPermisoType){
+        return [
+            'ID'=>Type::int(),
+            'Nombre'=>Type::string(),
+            'Codigo'=>Type::string(),
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string(),
+            'RolPermiso'=>[
+                "type" => Type::listOf($RolPermisoType),
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Rol::where('ID', $id)->with(['rol_permiso_r'])->first();
+                    if ($data->rol_permiso_r==null) {
+                        return null;
+                    }
+                    return $data->rol_permiso_r->toArray();
+                }
+            ],
+        ];
+    }
 ]);
 
 $PersonaCirugiaType=new ObjectType([
@@ -539,29 +567,39 @@ $PrecioTipoType=new ObjectType([
     ]
 ]);
 
-$RolType=new ObjectType([
-    'name' => 'RolType',
-    'description' => 'RolType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Rol'=>Type::string(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
-]);
-
 $RolPermisoType=new ObjectType([
     'name' => 'RolPermisoType',
     'description' => 'RolPermisoType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Rol'=>Type::int(),
-        'Permiso'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$RolType,&$PermisoType){
+        return [
+            'ID'=>Type::int(),
+            'Rol'=>[
+                "type" => $RolType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = RolPermiso::where('ID', $id)->with(['rol_r'])->first();
+                    if ($data->rol_r==null) {
+                        return null;
+                    }
+                    return $data->rol_r->toArray();
+                }
+            ],
+            'Permiso'=>[
+                "type" => $PermisoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = RolPermiso::where('ID', $id)->with(['permiso_r'])->first();
+                    if ($data->permiso_r==null) {
+                        return null;
+                    }
+                    return $data->permiso_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $TipoDocumentoType=new ObjectType([
