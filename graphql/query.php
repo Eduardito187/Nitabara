@@ -6,6 +6,7 @@ use App\Models\Ciudad;
 use App\Models\Zona;
 use App\Models\Barrio;
 use App\Models\TipoDocumento;
+use App\Models\Rol;
 $rootQuery=new ObjectType([
     'name'=>'Query',
     'fields'=>[
@@ -56,7 +57,14 @@ $rootQuery=new ObjectType([
                 $data=TipoDocumento::get()->toArray();
                 return $data;
             }
-        ]
+        ],
+        'Roles'=>[
+            'type'=>Type::listOf($RolType),
+            'resolve'=>function($root,$args){
+                $data=Rol::get()->toArray();
+                return $data;
+            }
+        ],
     ]
 ]);
 ?>
