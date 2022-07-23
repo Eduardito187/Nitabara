@@ -133,5 +133,58 @@ $Usuario=[
             return array("response"=>true);
         }
     ],
+    'Editar_Usuario'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int()),
+            'Email'=>Type::nonNull(Type::string()),
+            'Telefono'=>Type::nonNull(Type::string()),
+            'barrio'=>Type::nonNull(Type::int()),
+            'calle'=>Type::nonNull(Type::string()),
+            'casa'=>Type::nonNull(Type::string()),
+            'ci'=>Type::nonNull(Type::string()),
+            'ciudad'=>Type::nonNull(Type::int()),
+            'documento'=>Type::nonNull(Type::int()),
+            'materno'=>Type::nonNull(Type::string()),
+            'paterno'=>Type::nonNull(Type::string()),
+            'nombre'=>Type::nonNull(Type::string()),
+            'usuario'=>Type::nonNull(Type::string()),
+            'zona'=>Type::nonNull(Type::int()),
+            'nacimiento'=>Type::nonNull(Type::string())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $a=Usuario::find($args['ID']);
+            $v=false;
+            if ($a!=null) {
+                Usuario::where('ID', $args['ID'])->update([
+                    'Usuario'=>$args["usuario"],
+                    'FechaActualizado'=>$date_ahora
+                ]);
+                $Persona= Persona::where("Usuario", $args['ID'])->first();
+                Direccion::where('ID', $Persona->Direccion)->update([
+                    'Zona'=>$args["zona"],
+                    'Barrio'=>$args["barrio"],
+                    'Calle'=>$args["calle"],
+                    'Casa'=>$args["casa"],
+                    'FechaActualizado'=>$date_ahora
+                ]);
+                Persona::where('Usuario', $args['ID'])->update([
+                    'Nombre'=>$args["nombre"],
+                    'Paterno'=>$args["paterno"],
+                    'Materno'=>$args["materno"],
+                    'CI'=>$args["ci"],
+                    'Correo'=>$args["Email"],
+                    'Telefono'=>$args["Telefono"],
+                    'Nacimiento'=>$args["nacimiento"],
+                    'TipoDocumento'=>$args["documento"],
+                    'Ciudad'=>$args["ciudad"],
+                    'FechaActualizado'=>$date_ahora
+                ]);
+                $v=true;
+            }
+            return array("response"=>$v);
+        }
+    ],
 ]
 ?>
