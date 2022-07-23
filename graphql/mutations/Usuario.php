@@ -186,6 +186,30 @@ $Usuario=[
             return array("response"=>$v);
         }
     ],
-    
+    'Eliminar_Usuario'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $a=Usuario::find($args['ID']);
+            $v=false;
+            if ($a!=null) {
+                Usuario::where('ID', $args['ID'])->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                $Persona= Persona::where("Usuario", $args['ID'])->first();
+                Direccion::where('ID', $Persona->Direccion)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                Persona::where('Usuario', $args['ID'])->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                $v=true;
+            }
+            return array("response"=>$v);
+        }
+    ],
 ]
 ?>
