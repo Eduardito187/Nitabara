@@ -7,6 +7,7 @@ use App\Models\Zona;
 use App\Models\Barrio;
 use App\Models\TipoDocumento;
 use App\Models\Rol;
+use App\Models\Permiso;
 $rootQuery=new ObjectType([
     'name'=>'Query',
     'fields'=>[
@@ -62,6 +63,39 @@ $rootQuery=new ObjectType([
             'type'=>Type::listOf($RolType),
             'resolve'=>function($root,$args){
                 $data=Rol::get()->toArray();
+                return $data;
+            }
+        ],
+        'Rol'=>[
+            'type'=>$RolType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $data=Rol::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
+                return $data;
+            }
+        ],
+        'Permisos'=>[
+            'type'=>Type::listOf($PermisoType),
+            'resolve'=>function($root,$args){
+                $data=Permiso::get()->toArray();
+                return $data;
+            }
+        ],
+        'Permiso'=>[
+            'type'=>$PermisoType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $data=Permiso::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
                 return $data;
             }
         ],
