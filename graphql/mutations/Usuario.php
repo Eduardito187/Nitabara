@@ -1,5 +1,4 @@
 <?php
-
 use App\Models\Persona;
 use App\Models\Usuario;
 use App\Models\Direccion;
@@ -39,16 +38,6 @@ $Usuario=[
             if ($cuenta!=null) {
                 $v=true;
                 $id_cuenta=$cuenta->ID;
-                /*
-                $History=new HistorialLog([
-                    'ID'=>NULL,
-                    'Usuario'=>$id_cuenta,
-                    'Log'=>true,
-                    'IP'=>getUserIp(),
-                    'FechaCreado'=>date("Y-m-d h:i:s")
-                ]);
-                $x=$History->save();
-                */
             }
             return array("estado"=>$v,"id_cuenta"=>$id_cuenta);
         }
