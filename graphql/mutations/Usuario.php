@@ -215,7 +215,8 @@ $Usuario=[
     'Bloquear_Usuario'=>[
         'type'=>$ResponseType,
         'args'=>[
-            'ID'=>Type::nonNull(Type::int())
+            'ID'=>Type::nonNull(Type::int()),
+            'Estado'=>Type::nonNull(Type::boolean())
         ],
         'resolve'=>function($root,$args){
             $date_ahora=date("Y-m-d h:i:s");
@@ -223,7 +224,7 @@ $Usuario=[
             $v=false;
             if ($a!=null) {
                 Usuario::where('ID', $args['ID'])->update([
-                    'State'=>0,
+                    'State'=>$args["Estado"],
                     'FechaActualizado'=>$date_ahora
                 ]);
                 $Persona= Persona::where("Usuario", $args['ID'])->first();
