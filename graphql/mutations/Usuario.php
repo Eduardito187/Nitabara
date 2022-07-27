@@ -238,5 +238,25 @@ $Usuario=[
             return array("response"=>$v);
         }
     ],
+    'UpdateContra'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int()),
+            'Contra'=>Type::nonNull(Type::string())
+        ],
+        'resolve'=>function($root,$args){
+            $pwd=md5($args["Contra"]);
+            $a=Usuario::find($args['ID']);
+            $v=false;
+            if ($a!=null) {
+                Usuario::where('ID', $args['ID'])->update([
+                    'Pwd'=>$pwd,
+                    'FechaActualizado'=>date("Y-m-d h:i:s")
+                ]);
+                $v=true;
+            }
+            return array("response"=>$v);
+        }
+    ],
 ]
 ?>
