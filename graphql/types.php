@@ -46,6 +46,7 @@ $UsuarioType=new ObjectType([
                     return $data->foto->toArray();
                 }
             ],
+            'State'=>Type::string(),
             'FechaCreado'=>Type::string(),
             'FechaActualizado'=>Type::string(),
             'FechaEliminado'=>Type::string(),

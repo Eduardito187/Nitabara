@@ -9,7 +9,7 @@ use App\Models\Persona;
 class Usuario extends Model{
     protected $table="usuario";
     public $timestamps=false;
-    protected $fillable = ['ID','Usuario','Pwd','Perfil','FechaCreado','FechaActualizado','FechaEliminado'];
+    protected $fillable = ['ID','Usuario','Pwd','Perfil','State','FechaCreado','FechaActualizado','FechaEliminado'];
     public function foto(){
         return $this->hasOne(Foto::class,'ID','Perfil');
     }

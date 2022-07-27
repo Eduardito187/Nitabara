@@ -79,6 +79,7 @@ $Usuario=[
                 'Usuario'=>$args["usuario"],
                 'Pwd'=>md5($args["contra"]),
                 'Perfil'=>1,
+                'State'=>1,
                 'FechaCreado'=>$date_ahora,
                 'FechaActualizado'=>NULL,
                 'FechaEliminado'=>NULL
@@ -205,6 +206,32 @@ $Usuario=[
                 ]);
                 Persona::where('Usuario', $args['ID'])->update([
                     'FechaEliminado'=>$date_ahora
+                ]);
+                $v=true;
+            }
+            return array("response"=>$v);
+        }
+    ],
+    'Bloquear_Usuario'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $a=Usuario::find($args['ID']);
+            $v=false;
+            if ($a!=null) {
+                Usuario::where('ID', $args['ID'])->update([
+                    'State'=>0,
+                    'FechaActualizado'=>$date_ahora
+                ]);
+                $Persona= Persona::where("Usuario", $args['ID'])->first();
+                Direccion::where('ID', $Persona->Direccion)->update([
+                    'FechaActualizado'=>$date_ahora
+                ]);
+                Persona::where('Usuario', $args['ID'])->update([
+                    'FechaActualizado'=>$date_ahora
                 ]);
                 $v=true;
             }
