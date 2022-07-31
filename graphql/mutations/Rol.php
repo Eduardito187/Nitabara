@@ -59,6 +59,7 @@ $Rol=[
             if ($Rol==null) {
                 return array("response"=>false);
             }
+            
             Rol::where('ID', $args['ID'])->update([
                 'Rol' => isset($args["Nombre"])?$args["Nombre"]:$Rol->Rol
             ]);
