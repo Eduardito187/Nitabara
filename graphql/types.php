@@ -631,14 +631,36 @@ $TipoHistoriaType=new ObjectType([
 $UsuarioRolType=new ObjectType([
     'name' => 'UsuarioRolType',
     'description' => 'UsuarioRolType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Rol'=>Type::int(),
-        'Usuario'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$RolType,&$UsuarioType){
+            return [
+            'ID'=>Type::int(),
+            'Rol'=>[
+                "type" => $RolType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = UsuarioRol::where('ID', $id)->with(['rols'])->first();
+                    if ($data->rols==null) {
+                        return null;
+                    }
+                    return $data->rols->toArray();
+                }
+            ],
+            'Usuario'=>[
+                "type" => $UsuarioType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = UsuarioRol::where('ID', $id)->with(['usuario'])->first();
+                    if ($data->usuario==null) {
+                        return null;
+                    }
+                    return $data->usuario->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $ZonaType=new ObjectType([
