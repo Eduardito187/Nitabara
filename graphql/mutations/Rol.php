@@ -2,6 +2,8 @@
 use App\Models\Permiso;
 use App\Models\Rol;
 use App\Models\RolPermiso;
+use App\Models\Usuario;
+use App\Models\UsuarioRol;
 use GraphQL\Type\Definition\Type;
 function QuitarRoles($api,$ID){
     foreach ($api as $item) {
@@ -79,6 +81,46 @@ $Rol=[
                         'ID'=>NULL,
                         'Rol'=>$Rol->ID,
                         'Permiso'=>$r_p,
+                        'FechaCreado'=>date("Y-m-d h:i:s"),
+                        'FechaActualizado'=>NULL,
+                        'FechaEliminado'=>NULL
+                    ]);
+                    $x=$Rango_P->save();
+                }
+            }
+            //Operacion Exitosa
+            return array("response"=>true);
+        }
+    ],
+    'AsignadoDeRoles'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int()),
+            'Roles'=>Type::nonNull(Type::listOf(Type::int()))
+        ],
+        'resolve'=>function($root,$args){
+            $Usuario=Usuario::find($args["ID"]);
+            //No existe
+            if ($Usuario==null) {
+                return array("response"=>false);
+            }
+            
+            //Todos los Roles
+            $UsuarioRol = UsuarioRol::where("Usuario",$Usuario->ID)->get();
+            //Quitado de Roles
+            foreach ($UsuarioRol as $item) {
+                if (QuitarRoles($args["Roles"], $item->Rol)==false) {
+                    UsuarioRol::where("Usuario",$Usuario->ID)->where("Rol",$item->Rol)->delete();
+                }
+            }
+            //Agregado de Permisos
+            foreach ($args["Roles"] as $r_p) {
+                $Rango_UsuarioRol = UsuarioRol::where("Usuario",$Usuario->ID)->where("Rol",$r_p)->first();
+                if ($Rango_UsuarioRol==null) {
+                    $Rango_P=new UsuarioRol([
+                        'ID'=>NULL,
+                        'Rol'=>$r_p,
+                        'Usuario'=>$Usuario->ID,
                         'FechaCreado'=>date("Y-m-d h:i:s"),
                         'FechaActualizado'=>NULL,
                         'FechaEliminado'=>NULL
