@@ -112,11 +112,13 @@ $Rol=[
             //Todos los Roles
             $UsuarioRol = UsuarioRol::where("Usuario",$Usuario->ID)->get();
             //Quitado de Roles
+            /*
             foreach ($UsuarioRol as $item) {
                 if (QuitarRoles($args["Roles"], $item->Rol)==false) {
                     UsuarioRol::where("Usuario",$Usuario->ID)->where("Rol",$item->Rol)->delete();
                 }
-            }
+            }*/
+            UsuarioRol::where("Usuario",$Usuario->ID)->delete();
             //Agregado de Permisos
             foreach ($args["Roles"] as $r_p) {
                 $Rango_UsuarioRol = UsuarioRol::where("Usuario",$Usuario->ID)->where("Rol",$r_p)->first();
