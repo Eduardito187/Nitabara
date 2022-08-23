@@ -8,6 +8,8 @@ use App\Models\Barrio;
 use App\Models\TipoDocumento;
 use App\Models\Rol;
 use App\Models\Permiso;
+use App\Models\Cirugia;
+use App\Models\Consulta;
 $rootQuery=new ObjectType([
     'name'=>'Query',
     'fields'=>[
@@ -93,6 +95,46 @@ $rootQuery=new ObjectType([
             ],
             'resolve'=>function($root,$args){
                 $data=Permiso::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
+                return $data;
+            }
+        ],
+        'Cirugias'=>[
+            'type'=>Type::listOf($CirugiaType),
+            'resolve'=>function($root,$args){
+                $data=Cirugia::get()->toArray();
+                return $data;
+            }
+        ],
+        'Cirugia'=>[
+            'type'=>$CirugiaType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $data=Cirugia::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
+                return $data;
+            }
+        ],
+        'Consultas'=>[
+            'type'=>Type::listOf($ConsultaType),
+            'resolve'=>function($root,$args){
+                $data=Consulta::get()->toArray();
+                return $data;
+            }
+        ],
+        'Consulta'=>[
+            'type'=>$ConsultaType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $data=Consulta::find($args["ID"])->toArray();
                 if ($data==null) {
                     return null;
                 }
