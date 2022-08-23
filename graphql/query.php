@@ -141,6 +141,7 @@ $rootQuery=new ObjectType([
                 return $data;
             }
         ],
+        
     ]
 ]);
 ?>
