@@ -1,10 +1,17 @@
 <?php
 
+use App\Models\Administrativo;
 use App\Models\Cirugia;
+use App\Models\CirugiaPago;
 use App\Models\Consulta;
+use App\Models\ConsultaPago;
 use App\Models\Direccion;
 use App\Models\Medico;
+use App\Models\Pago;
+use App\Models\PagoPrecio;
 use App\Models\Persona;
+use App\Models\PersonaCirugia;
+use App\Models\PersonaConsulta;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use App\Models\Usuario;
@@ -119,14 +126,36 @@ $FotoType=new ObjectType([
 $AdministrativoType=new ObjectType([
     'name' => 'AdministrativoType',
     'description' => 'AdministrativoType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Usuario'=>Type::string(),
-        'Persona'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$UsuarioType,&$PersonaType){
+        return [
+            'ID'=>Type::int(),
+            'Usuario'=>[
+                "type" => $UsuarioType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Administrativo::where('ID', $id)->with(['usuario_r'])->first();
+                    if ($data->usuario_r==null) {
+                        return null;
+                    }
+                    return $data->usuario_r->toArray();
+                }
+            ],
+            'Persona'=>[
+                "type" => $PersonaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Administrativo::where('ID', $id)->with(['persona_r'])->first();
+                    if ($data->persona_r==null) {
+                        return null;
+                    }
+                    return $data->persona_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $BarrioType=new ObjectType([
@@ -144,7 +173,7 @@ $BarrioType=new ObjectType([
 $CirugiaType=new ObjectType([
     'name' => 'CirugiaType',
     'description' => 'CirugiaType',
-    'fields' => function () use(&$MedicoType,&$PersonaType){
+    'fields' => function () use(&$MedicoType,&$PersonaType,&$CirugiaPagoType){
         return [
             'ID'=>Type::int(),
             'Persona'=>[
@@ -170,6 +199,17 @@ $CirugiaType=new ObjectType([
                     return $data->medico_r->toArray();
                 }
             ],
+            'Pago'=>[
+                "type" => $CirugiaPagoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Cirugia::where('ID', $id)->with(['cirugia_pago_r'])->first();
+                    if ($data->cirugia_pago_r==null) {
+                        return null;
+                    }
+                    return $data->cirugia_pago_r->toArray();
+                }
+            ],
             'FechaCreado'=>Type::string(),
             'FechaActualizado'=>Type::string(),
             'FechaEliminado'=>Type::string()
@@ -180,15 +220,37 @@ $CirugiaType=new ObjectType([
 $CirugiaPagoType=new ObjectType([
     'name' => 'CirugiaType',
     'description' => 'CirugiaPagoType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Cirugia'=>Type::int(),
-        'Pago'=>Type::int(),
-        'Total'=>Type::float(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$CirugiaType,&$PagoType){
+        return [
+            'ID'=>Type::int(),
+            'Cirugia'=>[
+                "type" => $CirugiaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = CirugiaPago::where('ID', $id)->with(['cirugia_r'])->first();
+                    if ($data->cirugia_r==null) {
+                        return null;
+                    }
+                    return $data->cirugia_r->toArray();
+                }
+            ],
+            'Pago'=>[
+                "type" => $PagoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = CirugiaPago::where('ID', $id)->with(['pago_r'])->first();
+                    if ($data->pago_r==null) {
+                        return null;
+                    }
+                    return $data->pago_r->toArray();
+                }
+            ],
+            'Total'=>Type::float(),
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $CiudadType=new ObjectType([
@@ -206,7 +268,7 @@ $CiudadType=new ObjectType([
 $ConsultaType=new ObjectType([
     'name' => 'ConsultaType',
     'description' => 'ConsultaType',
-    'fields' => function () use(&$MedicoType){
+    'fields' => function () use(&$MedicoType,&$ConsultaPagoType){
         return [
             'ID'=>Type::int(),
             'Medico'=>[
@@ -224,7 +286,18 @@ $ConsultaType=new ObjectType([
             'Hora'=>Type::string(),
             'FechaCreado'=>Type::string(),
             'FechaActualizado'=>Type::string(),
-            'FechaEliminado'=>Type::string()
+            'FechaEliminado'=>Type::string(),
+            'Pago'=>[
+                "type" => $ConsultaPagoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Consulta::where('ID', $id)->with(['consulta_pago_r'])->first();
+                    if ($data->consulta_pago_r==null) {
+                        return null;
+                    }
+                    return $data->consulta_pago_r->toArray();
+                }
+            ],
         ];
     }
 ]);
@@ -232,16 +305,38 @@ $ConsultaType=new ObjectType([
 $ConsultaPagoType=new ObjectType([
     'name' => 'ConsultaPagoType',
     'description' => 'ConsultaPagoType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Pago'=>Type::int(),
-        'Consulta'=>Type::int(),
-        'Descripcion'=>Type::string(),
-        'Total'=>Type::float(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$ConsultaType,&$PagoType){
+        return [
+            'ID'=>Type::int(),
+            'Pago'=>[
+                "type" => $PagoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = ConsultaPago::where('ID', $id)->with(['pago_r'])->first();
+                    if ($data->pago_r==null) {
+                        return null;
+                    }
+                    return $data->pago_r->toArray();
+                }
+            ],
+            'Consulta'=>[
+                "type" => $ConsultaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = ConsultaPago::where('ID', $id)->with(['consulta_r'])->first();
+                    if ($data->consulta_r==null) {
+                        return null;
+                    }
+                    return $data->consulta_r->toArray();
+                }
+            ],
+            'Descripcion'=>Type::string(),
+            'Total'=>Type::float(),
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $DireccionType=new ObjectType([
@@ -523,27 +618,61 @@ $MedicoType=new ObjectType([
 $PagoType=new ObjectType([
     'name' => 'PagoType',
     'description' => 'PagoType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Monto'=>Type::float(),
-        'Administrativo'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$AdministrativoType){
+        return [
+            'ID'=>Type::int(),
+            'Monto'=>Type::float(),
+            'Administrativo'=>[
+                "type" => $AdministrativoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Pago::where('ID', $id)->with(['administrativo_r'])->first();
+                    if ($data->administrativo_r==null) {
+                        return null;
+                    }
+                    return $data->administrativo_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $PagoPrecioType=new ObjectType([
     'name' => 'PagoPrecioType',
     'description' => 'PagoPrecioType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Pago'=>Type::int(),
-        'Precio'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$PagoType,&$PrecioType){
+        return [
+            'ID'=>Type::int(),
+            'Pago'=>[
+                "type" => $PagoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = PagoPrecio::where('ID', $id)->with(['pago_r'])->first();
+                    if ($data->pago_r==null) {
+                        return null;
+                    }
+                    return $data->pago_r->toArray();
+                }
+            ],
+            'Precio'=>[
+                "type" => $PrecioType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = PagoPrecio::where('ID', $id)->with(['precio_r'])->first();
+                    if ($data->precio_r==null) {
+                        return null;
+                    }
+                    return $data->precio_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $PermisoType=new ObjectType([
@@ -575,28 +704,72 @@ $PermisoType=new ObjectType([
 $PersonaCirugiaType=new ObjectType([
     'name' => 'PersonaCirugiaType',
     'description' => 'PersonaCirugiaType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Persona'=>Type::int(),
-        'Cirugia'=>Type::int(),
-        'HoraAtencion'=>Type::string(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$PersonaType,&$CirugiaType){
+        return [
+            'ID'=>Type::int(),
+            'Persona'=>[
+                "type" => $PersonaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = PersonaCirugia::where('ID', $id)->with(['persona_r'])->first();
+                    if ($data->persona_r==null) {
+                        return null;
+                    }
+                    return $data->persona_r->toArray();
+                }
+            ],
+            'Cirugia'=>[
+                "type" => $CirugiaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = PersonaCirugia::where('ID', $id)->with(['cirugia_r'])->first();
+                    if ($data->cirugia_r==null) {
+                        return null;
+                    }
+                    return $data->cirugia_r->toArray();
+                }
+            ],
+            'HoraAtencion'=>Type::string(),
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $PersonaConsultaType=new ObjectType([
     'name' => 'PersonaConsultaType',
     'description' => 'PersonaConsultaType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Persona'=>Type::int(),
-        'Consulta'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$PersonaType,&$ConsultaType){
+        return [
+            'ID'=>Type::int(),
+            'Persona'=>[
+                "type" => $PersonaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = PersonaConsulta::where('ID', $id)->with(['persona_r'])->first();
+                    if ($data->persona_r==null) {
+                        return null;
+                    }
+                    return $data->persona_r->toArray();
+                }
+            ],
+            'Consulta'=>[
+                "type" => $ConsultaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = PersonaConsulta::where('ID', $id)->with(['consulta_r'])->first();
+                    if ($data->consulta_r==null) {
+                        return null;
+                    }
+                    return $data->consulta_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $PersonaExamenType=new ObjectType([
