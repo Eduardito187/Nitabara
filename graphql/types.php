@@ -218,7 +218,7 @@ $CirugiaType=new ObjectType([
 ]);
 
 $CirugiaPagoType=new ObjectType([
-    'name' => 'CirugiaType',
+    'name' => 'CirugiaPagoType',
     'description' => 'CirugiaPagoType',
     'fields' => function () use(&$CirugiaType,&$PagoType){
         return [
