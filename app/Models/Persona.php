@@ -5,6 +5,7 @@ use App\Models\Usuario;
 use App\Models\TipoDocumento;
 use App\Models\Ciudad;
 use App\Models\Direccion;
+use App\Models\Medico;
 class Persona extends Model{
     protected $table="persona";
     public $timestamps=false;
@@ -20,6 +21,9 @@ class Persona extends Model{
     }
     public function tipo_documento_r(){
         return $this->hasOne(TipoDocumento::class,'ID','TipoDocumento');
+    }
+    public function medico_r(){
+        return $this->hasOne(Medico::class,'Persona','ID');
     }
 }
 ?>

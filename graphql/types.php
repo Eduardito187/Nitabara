@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Cirugia;
+use App\Models\Consulta;
 use App\Models\Direccion;
+use App\Models\Medico;
 use App\Models\Persona;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -141,15 +144,37 @@ $BarrioType=new ObjectType([
 $CirugiaType=new ObjectType([
     'name' => 'CirugiaType',
     'description' => 'CirugiaType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Persona'=>Type::int(),
-        'Descripcion'=>Type::string(),
-        'Medico'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$MedicoType,&$PersonaType){
+        return [
+            'ID'=>Type::int(),
+            'Persona'=>[
+                "type" => $PersonaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Cirugia::where('ID', $id)->with(['persona_r'])->first();
+                    if ($data->persona_r==null) {
+                        return null;
+                    }
+                    return $data->persona_r->toArray();
+                }
+            ],
+            'Descripcion'=>Type::string(),
+            'Medico'=>[
+                "type" => $MedicoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Cirugia::where('ID', $id)->with(['medico_r'])->first();
+                    if ($data->medico_r==null) {
+                        return null;
+                    }
+                    return $data->medico_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $CirugiaPagoType=new ObjectType([
@@ -181,15 +206,27 @@ $CiudadType=new ObjectType([
 $ConsultaType=new ObjectType([
     'name' => 'ConsultaType',
     'description' => 'ConsultaType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Medico'=>Type::int(),
-        'Descripcion'=>Type::string(),
-        'Hora'=>Type::string(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$MedicoType){
+        return [
+            'ID'=>Type::int(),
+            'Medico'=>[
+                "type" => $MedicoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Consulta::where('ID', $id)->with(['medico_r'])->first();
+                    if ($data->medico_r==null) {
+                        return null;
+                    }
+                    return $data->medico_r->toArray();
+                }
+            ],
+            'Descripcion'=>Type::string(),
+            'Hora'=>Type::string(),
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $ConsultaPagoType=new ObjectType([
@@ -440,15 +477,47 @@ $HistoriaClinicaType=new ObjectType([
 $MedicoType=new ObjectType([
     'name' => 'MedicoType',
     'description' => 'MedicoType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Persona'=>Type::int(),
-        'Especialidad'=>Type::int(),
-        'Usuario'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$PersonaType,&$EspecialidadType,&$UsuarioType){
+        return [
+            'ID'=>Type::int(),
+            'Persona'=>[
+                "type" => $PersonaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Medico::where('ID', $id)->with(['persona_r'])->first();
+                    if ($data->persona_r==null) {
+                        return null;
+                    }
+                    return $data->persona_r->toArray();
+                }
+            ],
+            'Especialidad'=>[
+                "type" => $EspecialidadType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Medico::where('ID', $id)->with(['especialidad_r'])->first();
+                    if ($data->especialidad_r==null) {
+                        return null;
+                    }
+                    return $data->especialidad_r->toArray();
+                }
+            ],
+            'Usuario'=>[
+                "type" => $UsuarioType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Medico::where('ID', $id)->with(['usuario_r'])->first();
+                    if ($data->usuario_r==null) {
+                        return null;
+                    }
+                    return $data->usuario_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $PagoType=new ObjectType([

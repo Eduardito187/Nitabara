@@ -6,6 +6,7 @@ use App\Models\Administrativo;
 use App\Models\HistorialLog;
 use App\Models\UsuarioRol;
 use App\Models\Persona;
+use App\Models\Medico;
 class Usuario extends Model{
     protected $table="usuario";
     public $timestamps=false;
@@ -24,6 +25,9 @@ class Usuario extends Model{
     }
     public function persona(){
         return $this->hasOne(Persona::class,'Usuario','ID');
+    }
+    public function medico_r(){
+        return $this->hasOne(Medico::class,'Usuario','ID');
     }
 }
 ?>
