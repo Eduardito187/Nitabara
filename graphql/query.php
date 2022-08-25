@@ -10,6 +10,8 @@ use App\Models\Rol;
 use App\Models\Permiso;
 use App\Models\Cirugia;
 use App\Models\Consulta;
+use App\Models\Especialidad;
+
 $rootQuery=new ObjectType([
     'name'=>'Query',
     'fields'=>[
@@ -30,6 +32,26 @@ $rootQuery=new ObjectType([
             'type'=>Type::listOf($UsuarioType),
             'resolve'=>function($root,$args){
                 $data=Usuario::get()->toArray();
+                return $data;
+            }
+        ],
+        'Especialidades'=>[
+            'type'=>Type::listOf($EspecialidadType),
+            'resolve'=>function($root,$args){
+                $data=Especialidad::get()->toArray();
+                return $data;
+            }
+        ],
+        'Especialidad'=>[
+            'type'=>Type::listOf($EspecialidadType),
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $data=Especialidad::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
                 return $data;
             }
         ],
