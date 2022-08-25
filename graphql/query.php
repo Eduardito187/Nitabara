@@ -11,6 +11,8 @@ use App\Models\Permiso;
 use App\Models\Cirugia;
 use App\Models\Consulta;
 use App\Models\Especialidad;
+use App\Models\Medico;
+use App\Models\Persona;
 
 $rootQuery=new ObjectType([
     'name'=>'Query',
@@ -157,6 +159,46 @@ $rootQuery=new ObjectType([
             ],
             'resolve'=>function($root,$args){
                 $data=Consulta::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
+                return $data;
+            }
+        ],
+        'Personas'=>[
+            'type'=>Type::listOf($PersonaType),
+            'resolve'=>function($root,$args){
+                $data=Persona::get()->toArray();
+                return $data;
+            }
+        ],
+        'Persona'=>[
+            'type'=>$PersonaType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $data=Persona::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
+                return $data;
+            }
+        ],
+        'Medicos'=>[
+            'type'=>Type::listOf($MedicoType),
+            'resolve'=>function($root,$args){
+                $data=Medico::get()->toArray();
+                return $data;
+            }
+        ],
+        'Medico'=>[
+            'type'=>$MedicoType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $data=Medico::find($args["ID"])->toArray();
                 if ($data==null) {
                     return null;
                 }
