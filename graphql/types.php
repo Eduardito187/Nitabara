@@ -393,7 +393,7 @@ $EspecialidadType=new ObjectType([
 $ExamenesMedicosType=new ObjectType([
     'name' => 'ExamenesMedicosType',
     'description' => 'ExamenesMedicosType',
-    'fields' => function () use(&$MedicoType,&$PersonaType){
+    'fields' => function () use(&$MedicoType,&$PersonaType,&$ExamenesPagosType){
         return [
             'ID'=>Type::int(),
             'Persona'=>[
@@ -417,6 +417,17 @@ $ExamenesMedicosType=new ObjectType([
                         return null;
                     }
                     return $data->medico_r->toArray();
+                }
+            ],
+            'Pago'=>[
+                "type" => $ExamenesPagosType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = ExamenesMedicos::where('ID', $id)->with(['examen_pago_r'])->first();
+                    if ($data->examen_pago_r==null) {
+                        return null;
+                    }
+                    return $data->examen_pago_r->toArray();
                 }
             ],
             'FechaCreado'=>Type::string(),
