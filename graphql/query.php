@@ -11,6 +11,7 @@ use App\Models\Permiso;
 use App\Models\Cirugia;
 use App\Models\Consulta;
 use App\Models\Especialidad;
+use App\Models\ExamenesMedicos;
 use App\Models\Medico;
 use App\Models\Persona;
 
@@ -199,6 +200,26 @@ $rootQuery=new ObjectType([
             ],
             'resolve'=>function($root,$args){
                 $data=Medico::find($args["ID"])->toArray();
+                if ($data==null) {
+                    return null;
+                }
+                return $data;
+            }
+        ],
+        'Examenes'=>[
+            'type'=>Type::listOf($ExamenesMedicosType),
+            'resolve'=>function($root,$args){
+                $data=ExamenesMedicos::get()->toArray();
+                return $data;
+            }
+        ],
+        'Examen'=>[
+            'type'=>$ExamenesMedicosType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $data=ExamenesMedicos::find($args["ID"])->toArray();
                 if ($data==null) {
                     return null;
                 }
