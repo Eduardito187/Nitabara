@@ -6,6 +6,7 @@ use App\Models\CirugiaPago;
 use App\Models\Consulta;
 use App\Models\ConsultaPago;
 use App\Models\Direccion;
+use App\Models\ExamenesMedicos;
 use App\Models\Medico;
 use App\Models\Pago;
 use App\Models\PagoPrecio;
@@ -392,15 +393,37 @@ $EspecialidadType=new ObjectType([
 $ExamenesMedicosType=new ObjectType([
     'name' => 'ExamenesMedicosType',
     'description' => 'ExamenesMedicosType',
-    'fields'=>[
-        'ID'=>Type::int(),
-        'Persona'=>Type::int(),
-        'Descripcion'=>Type::string(),
-        'Medico'=>Type::int(),
-        'FechaCreado'=>Type::string(),
-        'FechaActualizado'=>Type::string(),
-        'FechaEliminado'=>Type::string()
-    ]
+    'fields' => function () use(&$MedicoType,&$PersonaType){
+        return [
+            'ID'=>Type::int(),
+            'Persona'=>[
+                "type" => $PersonaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = ExamenesMedicos::where('ID', $id)->with(['persona_r'])->first();
+                    if ($data->persona_r==null) {
+                        return null;
+                    }
+                    return $data->persona_r->toArray();
+                }
+            ],
+            'Descripcion'=>Type::string(),
+            'Medico'=>[
+                "type" => $MedicoType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = ExamenesMedicos::where('ID', $id)->with(['medico_r'])->first();
+                    if ($data->medico_r==null) {
+                        return null;
+                    }
+                    return $data->medico_r->toArray();
+                }
+            ],
+            'FechaCreado'=>Type::string(),
+            'FechaActualizado'=>Type::string(),
+            'FechaEliminado'=>Type::string()
+        ];
+    }
 ]);
 
 $ExamenesPagosType=new ObjectType([
