@@ -3,6 +3,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Persona;
 use App\Models\Medico;
+use App\Models\ExamenesPago;
 class ExamenesMedicos extends Model{
     protected $table="examenes_medicos";
     public $timestamps=false;
@@ -12,6 +13,9 @@ class ExamenesMedicos extends Model{
     }
     public function persona_r(){
         return $this->hasOne(Persona::class,'ID','Persona');
+    }
+    public function examen_pago_r(){
+        return $this->hasOne(ExamenesPago::class,'Examen','ID');
     }
 }
 ?>
