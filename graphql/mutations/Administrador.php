@@ -4,6 +4,7 @@ use App\Models\Administrativo;
 use App\Models\Cirugia;
 use App\Models\CirugiaPago;
 use App\Models\Consulta;
+use App\Models\ConsultaPago;
 use App\Models\ExamenesMedicos;
 use App\Models\ExamenesPago;
 use App\Models\Pago;
@@ -135,7 +136,7 @@ $Administrador=[
                 return array("response"=>false);
             }
 
-            $CirugiaPago_N=new CirugiaPago([
+            $ConsultaPago_N=new ConsultaPago([
                 'ID'=>NULL,
                 'Pago'=>$Pago->ID,
                 'Consulta'=>$Consulta->ID,
@@ -145,7 +146,7 @@ $Administrador=[
                 'FechaActualizado'=>NULL,
                 'FechaEliminado'=>NULL
             ]);
-            $CirugiaPago_N->save();
+            $ConsultaPago_N->save();
 
             $PersonaConsulta_N=new PersonaConsulta([
                 'ID'=>NULL,
