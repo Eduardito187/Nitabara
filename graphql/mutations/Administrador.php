@@ -26,7 +26,7 @@ $Administrador=[
         'resolve'=>function($root,$args){
             $date_ahora=date("Y-m-d h:i:s");
 
-            $Administrativo = Administrativo::where("Persona",$args["Usuario"])->first();
+            $Administrativo = Administrativo::where("Usuario",$args["Usuario"])->first();
             if ($Administrativo == null) {
                 return array("response"=>false);
             }
@@ -100,7 +100,7 @@ $Administrador=[
         'resolve'=>function($root,$args){
             $date_ahora=date("Y-m-d h:i:s");
 
-            $Administrativo = Administrativo::where("Persona",$args["Usuario"])->first();
+            $Administrativo = Administrativo::where("Usuario",$args["Usuario"])->first();
             if ($Administrativo == null) {
                 return array("response"=>false);
             }
@@ -174,7 +174,7 @@ $Administrador=[
         'resolve'=>function($root,$args){
             $date_ahora=date("Y-m-d h:i:s");
 
-            $Administrativo = Administrativo::where("Persona",$args["Usuario"])->first();
+            $Administrativo = Administrativo::where("Usuario",$args["Usuario"])->first();
             if ($Administrativo == null) {
                 return array("response"=>false);
             }
