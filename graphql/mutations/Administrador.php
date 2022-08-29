@@ -99,7 +99,6 @@ $Administrador=[
         'resolve'=>function($root,$args){
             $date_ahora=date("Y-m-d h:i:s");
             $Administrativo = Administrativo::where("Usuario",$args["Usuario"])->first();
-            print_r($Administrativo);
             if ($Administrativo == null) {
                 return array("response"=>false);
             }
