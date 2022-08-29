@@ -269,9 +269,20 @@ $CiudadType=new ObjectType([
 $ConsultaType=new ObjectType([
     'name' => 'ConsultaType',
     'description' => 'ConsultaType',
-    'fields' => function () use(&$MedicoType,&$ConsultaPagoType){
+    'fields' => function () use(&$MedicoType,&$ConsultaPagoType,&$PersonaType){
         return [
             'ID'=>Type::int(),
+            'Persona'=>[
+                "type" => $PersonaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Consulta::where('ID', $id)->with(['persona_r'])->first();
+                    if ($data->persona_r==null) {
+                        return null;
+                    }
+                    return $data->persona_r->toArray();
+                }
+            ],
             'Medico'=>[
                 "type" => $MedicoType,
                 "resolve" => function ($root, $args) {
