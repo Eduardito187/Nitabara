@@ -14,4 +14,5 @@ $rootMutation=new ObjectType([
     'name'=>'Mutation',
     'fields' => $mutations
 ]);
+
 ?>
