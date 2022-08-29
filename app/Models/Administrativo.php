@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Usuario;
 use App\Models\Persona;
 class Administrativo extends Model{
-    protected $table="historial_log";
+    protected $table="administrativo";
     public $timestamps=false;
     protected $fillable = ['ID','Usuario','Persona','FechaCreado','FechaActualizado','FechaEliminado'];
     public function usuario_r(){
