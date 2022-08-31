@@ -174,7 +174,7 @@ $BarrioType=new ObjectType([
 $CirugiaType=new ObjectType([
     'name' => 'CirugiaType',
     'description' => 'CirugiaType',
-    'fields' => function () use(&$MedicoType,&$PersonaType,&$CirugiaPagoType){
+    'fields' => function () use(&$MedicoType,&$PersonaType,&$CirugiaPagoType,&$PersonaCirugiaType){
         return [
             'ID'=>Type::int(),
             'Persona'=>[
@@ -209,6 +209,17 @@ $CirugiaType=new ObjectType([
                         return null;
                     }
                     return $data->cirugia_pago_r->toArray();
+                }
+            ],
+            'PersonaCirugia'=>[
+                "type" => $PersonaCirugiaType,
+                "resolve" => function ($root, $args) {
+                    $id = $root['ID'];
+                    $data = Cirugia::where('ID', $id)->with(['persona_cirugia_r'])->first();
+                    if ($data->persona_cirugia_r==null) {
+                        return null;
+                    }
+                    return $data->persona_cirugia_r->toArray();
                 }
             ],
             'FechaCreado'=>Type::string(),
