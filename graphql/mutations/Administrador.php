@@ -477,6 +477,6 @@ $Administrador=[
 
             return array("response"=>true);
         }
-    ],
+    ]
 ];
 ?>
