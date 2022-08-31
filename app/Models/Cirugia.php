@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Persona;
 use App\Models\Medico;
 use App\Models\CirugiaPago;
+use App\Models\PersonaCirugia;
 class Cirugia extends Model{
     protected $table="cirugia";
     public $timestamps=false;
@@ -16,6 +17,9 @@ class Cirugia extends Model{
     }
     public function cirugia_pago_r(){
         return $this->hasOne(CirugiaPago::class,'Cirugia','ID');
+    }
+    public function persona_cirugia_r(){
+        return $this->hasOne(PersonaCirugia::class,'Cirugia','ID');
     }
 }
 ?>
