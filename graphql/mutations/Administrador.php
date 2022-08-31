@@ -87,6 +87,90 @@ $Administrador=[
             return array("response"=>true);
         }
     ],
+    'EditCirugia'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int()),
+            'Usuario'=>Type::nonNull(Type::int()),
+            'Paciente'=>Type::nonNull(Type::int()),
+            'Medico'=>Type::nonNull(Type::int()),
+            'Descripcion'=>Type::nonNull(Type::string()),
+            'Hora'=>Type::nonNull(Type::string()),
+            'Precio'=>Type::nonNull(Type::float())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $Administrativo = Administrativo::where("Usuario",$args["Usuario"])->first();
+            if ($Administrativo == null) {
+                return array("response"=>false);
+            }
+            
+            $Pago_D=new Pago([
+                'ID'=>NULL,
+                'Monto'=>$args["Precio"],
+                'Administrativo'=>$Administrativo->ID,
+                'FechaCreado'=>$date_ahora,
+                'FechaActualizado'=>NULL,
+                'FechaEliminado'=>NULL
+            ]);
+            $Pago_D->save();
+
+            $Pago = Pago::where("Administrativo",$Administrativo->ID)->where('FechaCreado',$date_ahora)->first();
+            if ($Pago == null) {
+                return array("response"=>false);
+            }
+
+            $Cirugia = Cirugia::find($args["ID"]);
+            if ($Cirugia == null) {
+                return array("response"=>false);
+            }
+
+            Cirugia::where('ID', $Cirugia->ID)->update([
+                'Persona'=>$args["Paciente"],
+                'Descripcion'=>$args["Descripcion"],
+                'Medico'=>$args["Medico"],
+                'FechaActualizado'=>$date_ahora
+            ]);
+            CirugiaPago::where('Cirugia', $Cirugia->ID)->update([
+                'Pago'=>$Pago->ID,
+                'Total'=>$args["Precio"],
+                'FechaCreado'=>$date_ahora,
+                'FechaActualizado'=>$date_ahora
+            ]);
+            PersonaCirugia::where('Cirugia', $Cirugia->ID)->update([
+                'Persona'=>$args["Paciente"],
+                'HoraAtencion'=>$args["Hora"],
+                'FechaActualizado'=>$date_ahora
+            ]);
+
+            return array("response"=>true);
+        }
+    ],
+    'DeleteCirugia'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $Cirugia = Cirugia::find($args["ID"]);
+            if ($Cirugia == null) {
+                return array("response"=>false);
+            }
+
+            Cirugia::where('ID', $Cirugia->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
+            CirugiaPago::where('Cirugia', $Cirugia->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
+            PersonaCirugia::where('Cirugia', $Cirugia->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
+
+            return array("response"=>true);
+        }
+    ],
     'CreateConsulta'=>[
         'type'=>$ResponseType,
         'args'=>[
@@ -161,6 +245,88 @@ $Administrador=[
             return array("response"=>true);
         }
     ],
+    'EditConsulta'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int()),
+            'Usuario'=>Type::nonNull(Type::int()),
+            'Paciente'=>Type::nonNull(Type::int()),
+            'Medico'=>Type::nonNull(Type::int()),
+            'Descripcion'=>Type::nonNull(Type::string()),
+            'Hora'=>Type::nonNull(Type::string()),
+            'Precio'=>Type::nonNull(Type::float())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $Administrativo = Administrativo::where("Usuario",$args["Usuario"])->first();
+            if ($Administrativo == null) {
+                return array("response"=>false);
+            }
+            
+            $Pago_D=new Pago([
+                'ID'=>NULL,
+                'Monto'=>$args["Precio"],
+                'Administrativo'=>$Administrativo->ID,
+                'FechaCreado'=>$date_ahora,
+                'FechaActualizado'=>NULL,
+                'FechaEliminado'=>NULL
+            ]);
+            $Pago_D->save();
+
+            $Pago = Pago::where("Administrativo",$Administrativo->ID)->where('FechaCreado',$date_ahora)->first();
+            if ($Pago == null) {
+                return array("response"=>false);
+            }
+
+            $Consulta = Consulta::find($args["ID"]);
+            if ($Consulta == null) {
+                return array("response"=>false);
+            }
+            Consulta::where('ID', $Consulta->ID)->update([
+                'Persona'=>$args["Paciente"],
+                'Medico'=>$args["Medico"],
+                'Descripcion'=>$args["Descripcion"],
+                'Hora'=>$args["Hora"],
+                'FechaActualizado'=>$date_ahora
+            ]);
+            ConsultaPago::where('Consulta', $Consulta->ID)->update([
+                'Pago'=>$Pago->ID,
+                'Descripcion'=>$args["Descripcion"],
+                'Total'=>$args["Precio"],
+                'FechaActualizado'=>$date_ahora
+            ]);
+            PersonaConsulta::where('Consulta', $Consulta->ID)->update([
+                'Persona'=>$args["Paciente"],
+                'FechaActualizado'=>$date_ahora
+            ]);
+
+            return array("response"=>true);
+        }
+    ],
+    'DeleteConsulta'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $Consulta = Consulta::find($args["ID"]);
+            if ($Consulta == null) {
+                return array("response"=>false);
+            }
+            Consulta::where('ID', $Consulta->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
+            ConsultaPago::where('Consulta', $Consulta->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
+            PersonaConsulta::where('Consulta', $Consulta->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
+
+            return array("response"=>true);
+        }
+    ],
     'CreateExamen'=>[
         'type'=>$ResponseType,
         'args'=>[
@@ -228,6 +394,86 @@ $Administrador=[
                 'FechaEliminado'=>NULL
             ]);
             $PersonaExamen_N->save();
+
+            return array("response"=>true);
+        }
+    ],
+    'EditExamen'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int()),
+            'Usuario'=>Type::nonNull(Type::int()),
+            'Paciente'=>Type::nonNull(Type::int()),
+            'Medico'=>Type::nonNull(Type::int()),
+            'Descripcion'=>Type::nonNull(Type::string()),
+            'Precio'=>Type::nonNull(Type::float())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $Administrativo = Administrativo::where("Usuario",$args["Usuario"])->first();
+            if ($Administrativo == null) {
+                return array("response"=>false);
+            }
+            
+            $Pago_D=new Pago([
+                'ID'=>NULL,
+                'Monto'=>$args["Precio"],
+                'Administrativo'=>$Administrativo->ID,
+                'FechaCreado'=>$date_ahora,
+                'FechaActualizado'=>NULL,
+                'FechaEliminado'=>NULL
+            ]);
+            $Pago_D->save();
+
+            $Pago = Pago::where("Administrativo",$Administrativo->ID)->where('FechaCreado',$date_ahora)->first();
+            if ($Pago == null) {
+                return array("response"=>false);
+            }
+            $ExamenesMedicos = ExamenesMedicos::find($args["ID"]);
+            if ($ExamenesMedicos == null) {
+                return array("response"=>false);
+            }
+
+            ExamenesMedicos::where('ID', $ExamenesMedicos->ID)->update([
+                'Persona'=>$args["Paciente"],
+                'Descripcion'=>$args["Descripcion"],
+                'Medico'=>$args["Medico"],
+                'FechaActualizado'=>$date_ahora
+            ]);
+            ExamenesPago::where('Examen', $ExamenesMedicos->ID)->update([
+                'Pago'=>$Pago->ID,
+                'Total'=>$args["Precio"],
+                'FechaActualizado'=>$date_ahora
+            ]);
+            PersonaExamen::where('Examen', $ExamenesMedicos->ID)->update([
+                'Persona'=>$args["Paciente"],
+                'FechaActualizado'=>$date_ahora
+            ]);
+
+            return array("response"=>true);
+        }
+    ],
+    'DeleteExamen'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::int())
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            $ExamenesMedicos = ExamenesMedicos::find($args["ID"]);
+            if ($ExamenesMedicos == null) {
+                return array("response"=>false);
+            }
+
+            ExamenesMedicos::where('ID', $ExamenesMedicos->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
+            ExamenesPago::where('Examen', $ExamenesMedicos->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
+            PersonaExamen::where('Examen', $ExamenesMedicos->ID)->update([
+                'FechaEliminado'=>$date_ahora
+            ]);
 
             return array("response"=>true);
         }
