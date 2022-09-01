@@ -129,7 +129,7 @@ $rootQuery=new ObjectType([
         'Cirugias'=>[
             'type'=>Type::listOf($CirugiaType),
             'resolve'=>function($root,$args){
-                $data=Cirugia::get()->toArray();
+                $data=Cirugia::where('FechaEliminado', NULL)->get()->toArray();
                 return $data;
             }
         ],
@@ -149,7 +149,7 @@ $rootQuery=new ObjectType([
         'Consultas'=>[
             'type'=>Type::listOf($ConsultaType),
             'resolve'=>function($root,$args){
-                $data=Consulta::get()->toArray();
+                $data=Consulta::where('FechaEliminado', NULL)->get()->toArray();
                 return $data;
             }
         ],
@@ -209,7 +209,7 @@ $rootQuery=new ObjectType([
         'Examenes'=>[
             'type'=>Type::listOf($ExamenesMedicosType),
             'resolve'=>function($root,$args){
-                $data=ExamenesMedicos::get()->toArray();
+                $data=ExamenesMedicos::where('FechaEliminado', NULL)->get()->toArray();
                 return $data;
             }
         ],

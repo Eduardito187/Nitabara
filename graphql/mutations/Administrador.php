@@ -171,6 +171,32 @@ $Administrador=[
             return array("response"=>true);
         }
     ],
+    'ListDeleteCirugia'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::listOf(Type::int()))
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            foreach ($args["ID"] as $ID) {
+                $Cirugia = Cirugia::find($ID);
+                if ($Cirugia == null) {
+                    return array("response"=>false);
+                }
+
+                Cirugia::where('ID', $Cirugia->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                CirugiaPago::where('Cirugia', $Cirugia->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                PersonaCirugia::where('Cirugia', $Cirugia->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+            }
+            return array("response"=>true);
+        }
+    ],
     'CreateConsulta'=>[
         'type'=>$ResponseType,
         'args'=>[
@@ -327,6 +353,31 @@ $Administrador=[
             return array("response"=>true);
         }
     ],
+    'ListDeleteConsulta'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::listOf(Type::int()))
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            foreach ($args["ID"] as $ID) {
+                $Consulta = Consulta::find($ID);
+                if ($Consulta == null) {
+                    return array("response"=>false);
+                }
+                Consulta::where('ID', $Consulta->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                ConsultaPago::where('Consulta', $Consulta->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                PersonaConsulta::where('Consulta', $Consulta->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+            }
+            return array("response"=>true);
+        }
+    ],
     'CreateExamen'=>[
         'type'=>$ResponseType,
         'args'=>[
@@ -474,6 +525,33 @@ $Administrador=[
             PersonaExamen::where('Examen', $ExamenesMedicos->ID)->update([
                 'FechaEliminado'=>$date_ahora
             ]);
+
+            return array("response"=>true);
+        }
+    ],
+    'ListDeleteExamen'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::listOf(Type::int()))
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            foreach ($args["ID"] as $ID) {
+                $ExamenesMedicos = ExamenesMedicos::find($ID);
+                if ($ExamenesMedicos == null) {
+                    return array("response"=>false);
+                }
+    
+                ExamenesMedicos::where('ID', $ExamenesMedicos->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                ExamenesPago::where('Examen', $ExamenesMedicos->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+                PersonaExamen::where('Examen', $ExamenesMedicos->ID)->update([
+                    'FechaEliminado'=>$date_ahora
+                ]);
+            }
 
             return array("response"=>true);
         }
