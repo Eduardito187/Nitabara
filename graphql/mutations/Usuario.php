@@ -37,7 +37,9 @@ $Usuario=[
             $id_cuenta=0;
             if ($cuenta!=null) {
                 $v=true;
-                $id_cuenta=$cuenta->ID;
+                if ($cuenta->FechaEliminado == NULL && $cuenta->State == 1) {
+                    $id_cuenta=$cuenta->ID;
+                }
             }
             return array("estado"=>$v,"id_cuenta"=>$id_cuenta);
         }
@@ -214,14 +216,17 @@ $Usuario=[
             if ($a!=null) {
                 Usuario::where('ID', $args['ID'])->update([
                     'State'=>$args["Estado"],
-                    'FechaActualizado'=>$date_ahora
+                    'FechaActualizado'=>$date_ahora,
+                    'FechaEliminado'=>$date_ahora
                 ]);
                 $Persona= Persona::where("Usuario", $args['ID'])->first();
                 Direccion::where('ID', $Persona->Direccion)->update([
-                    'FechaActualizado'=>$date_ahora
+                    'FechaActualizado'=>$date_ahora,
+                    'FechaEliminado'=>$date_ahora
                 ]);
                 Persona::where('Usuario', $args['ID'])->update([
-                    'FechaActualizado'=>$date_ahora
+                    'FechaActualizado'=>$date_ahora,
+                    'FechaEliminado'=>$date_ahora
                 ]);
                 $v=true;
             }
