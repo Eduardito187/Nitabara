@@ -231,7 +231,7 @@ $rootQuery=new ObjectType([
             'type'=>$ExamenesMedicosType,
             'args'=>[
                 'ID'=>Type::nonNull(Type::int()),
-                'Codigo'=>Type::nonNull(Type::int())
+                'Codigo'=>Type::nonNull(Type::string())
             ],
             'resolve'=>function($root,$args){
                 $Permisos = Permiso::where("Codigo",$args["Codigo"])->with(['rol_permiso_r'])->get();
