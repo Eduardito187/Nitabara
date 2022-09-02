@@ -228,7 +228,7 @@ $rootQuery=new ObjectType([
             }
         ],
         'ValidarPermiso'=>[
-            'type'=>$ExamenesMedicosType,
+            'type'=>$ResponseType,
             'args'=>[
                 'ID'=>Type::nonNull(Type::int()),
                 'Codigo'=>Type::nonNull(Type::string())
