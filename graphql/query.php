@@ -238,9 +238,8 @@ $rootQuery=new ObjectType([
                 foreach ($Permisos as $permiso) {
                     if ($permiso->rol_permiso_r != null) {
                         print_r($permiso->rol_permiso_r);
-                        print_r($permiso->rol_permiso_r->Rol);
+                        echo $permiso->rol_permiso_r->Rol;
                         $roles_user = UsuarioRol::where("Usuario",$args["ID"])->where("Rol",$permiso->rol_permiso_r->Rol)->first();
-                        print_r($roles_user);
                         if ($roles_user != null) {
                             return array("response"=>true);
                         }
