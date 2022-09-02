@@ -237,11 +237,12 @@ $rootQuery=new ObjectType([
                 $Permisos = Permiso::where("Codigo",$args["Codigo"])->with(['rol_permiso_r'])->get();
                 foreach ($Permisos as $permiso) {
                     if ($permiso->rol_permiso_r != null) {
-                        print_r($permiso->rol_permiso_r);
-                        echo $permiso->rol_permiso_r->Rol;
-                        $roles_user = UsuarioRol::where("Usuario",$args["ID"])->where("Rol",$permiso->rol_permiso_r->Rol)->first();
-                        if ($roles_user != null) {
-                            return array("response"=>true);
+                        foreach ($permiso->rol_permiso_r as $rol) {
+                            echo $rol->Rol;
+                            $roles_user = UsuarioRol::where("Usuario",$args["ID"])->where("Rol",$rol->Rol)->first();
+                            if ($roles_user != null) {
+                                return array("response"=>true);
+                            }
                         }
                     }
                 }
