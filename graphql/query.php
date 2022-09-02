@@ -14,6 +14,7 @@ use App\Models\Especialidad;
 use App\Models\ExamenesMedicos;
 use App\Models\Medico;
 use App\Models\Persona;
+use App\Models\UsuarioRol;
 
 $rootQuery=new ObjectType([
     'name'=>'Query',
@@ -226,7 +227,24 @@ $rootQuery=new ObjectType([
                 return $data;
             }
         ],
-        
+        'ValidarPermiso'=>[
+            'type'=>$ExamenesMedicosType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int()),
+                'Codigo'=>Type::nonNull(Type::int())
+            ],
+            'resolve'=>function($root,$args){
+                $Permisos = Permiso::where("Codigo",$args["Codigo"])->with(['rol_permiso_r'])->get();
+                foreach ($Permisos as $permiso) {
+                    if ($permiso->rol_permiso_r != null) {
+                        print_r($permiso->rol_permiso_r);
+                    }
+                }
+                //$roles_user = UsuarioRol::where("Usuario",$args["ID"])->get();
+
+                return true;
+            }
+        ],
     ]
 ]);
 ?>
