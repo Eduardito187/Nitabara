@@ -14,6 +14,7 @@ use App\Models\Especialidad;
 use App\Models\ExamenesMedicos;
 use App\Models\Medico;
 use App\Models\Persona;
+use App\Models\RolPermiso;
 use App\Models\UsuarioRol;
 
 $rootQuery=new ObjectType([
@@ -227,7 +228,7 @@ $rootQuery=new ObjectType([
                 return $data;
             }
         ],
-        'ValidarPermiso'=>[
+        'ValidarPermisoUser'=>[
             'type'=>$ResponseType,
             'args'=>[
                 'ID'=>Type::nonNull(Type::int()),
@@ -241,6 +242,30 @@ $rootQuery=new ObjectType([
                             $roles_user = UsuarioRol::where("Usuario",$args["ID"])->where("Rol",$rol->Rol)->first();
                             if ($roles_user != null) {
                                 return array("response"=>true);
+                            }
+                        }
+                    }
+                }
+                return array("response"=>false);
+            }
+        ],
+        'ValidarPermisoRango'=>[
+            'type'=>$ResponseType,
+            'args'=>[
+                'ID'=>Type::nonNull(Type::int()),
+                'Rol'=>Type::nonNull(Type::int()),
+                'Codigo'=>Type::nonNull(Type::string())
+            ],
+            'resolve'=>function($root,$args){
+                $Permisos = Permiso::where("Codigo",$args["Codigo"])->with(['rol_permiso_r'])->get();
+                foreach ($Permisos as $permiso) {
+                    if ($permiso->rol_permiso_r != null) {
+                        foreach ($permiso->rol_permiso_r as $rol) {
+                            if ($args["Rol"] == $rol->Rol) {
+                                $roles_user = UsuarioRol::where("Usuario",$args["ID"])->where("Rol",$rol->Rol)->first();
+                                if ($roles_user != null) {
+                                    return array("response"=>true);
+                                }
                             }
                         }
                     }
