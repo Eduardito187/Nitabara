@@ -1,4 +1,6 @@
 <?php
+
+use App\Models\Administrativo;
 use App\Models\Persona;
 use App\Models\Usuario;
 use App\Models\Direccion;
@@ -121,6 +123,21 @@ $Usuario=[
                 'FechaEliminado'=>NULL
             ]);
             $x=$persona->save();
+            $Per_SONA = Persona::where('CI', $args["ci"])->where('FechaCreado',$date_ahora_p)->get()->toArray();
+            if ($Per_SONA==null) {
+                return array("response"=>false);
+            }
+
+            $admin=new Administrativo([
+                'ID'=>NULL,
+                'Usuario'=>$cod_ID,
+                'Persona'=>$Per_SONA[0]["ID"],
+                'FechaCreado'=>$date_ahora_p,
+                'FechaActualizado'=>NULL,
+                'FechaEliminado'=>NULL
+            ]);
+            $x=$admin->save();
+            
 
             return array("response"=>true);
         }
