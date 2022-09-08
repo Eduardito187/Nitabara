@@ -1,16 +1,16 @@
 <?php
 require('vendor/autoload.php');
 use Illuminate\Database\Capsule\Manager as Capsule;
+use App\database;
 
-use App\Models\Rango;
-use App\Models\Cuenta;
 $capsule = new Capsule;
+
 $capsule->addConnection([
     'driver' => 'mysql',
-    'host' => 'localhost',
-    'database' => 'u960392013_nitabara',
-    'username' => 'u960392013_nitabara',
-    'password' => 'NitaBaraProyecto_Grado123',
+    'host' => database::server,
+    'database' => database::database,
+    'username' => database::user,
+    'password' => database::password,
     'charset' => 'utf8',
     'collation' => 'utf8_unicode_ci',
     'prefix' => '',
