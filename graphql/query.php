@@ -14,6 +14,8 @@ use App\Models\Especialidad;
 use App\Models\ExamenesMedicos;
 use App\Models\Medico;
 use App\Models\Persona;
+use App\Models\PersonaCirugia;
+use App\Models\PersonaExamen;
 use App\Models\RolPermiso;
 use App\Models\UsuarioRol;
 
@@ -271,6 +273,125 @@ $rootQuery=new ObjectType([
                     }
                 }
                 return array("response"=>false);
+            }
+        ],
+        'CirugiasFiltro'=>[
+            'type'=>Type::listOf($CirugiaType),
+            'args'=>[
+                'Busqueda'=>Type::nonNull(Type::string()),
+                'Filtro'=>Type::nonNull(Type::string())
+            ],
+            'resolve'=>function($root,$args){
+                if (isset($args["Filtro"]) && isset($args["Busqueda"])) {
+
+                    $Persona=Persona::select('ID')->where('CI', 'like', '%'.$args["Busqueda"].'%')->get();
+                    $personas=array();
+                    foreach($Persona as $s){
+                        $personas[]=$s->ID;
+                    }
+
+                    $data=[];
+                    if ($args["Filtro"] == "Paciente") {
+
+                        $PersonaCirugia=PersonaCirugia::select('Cirugia')->whereIn('Persona', $personas)->get();
+                        $CirugiasID = array();
+                        foreach($PersonaCirugia as $s){
+                            $CirugiasID[]=$s->Cirugia;
+                        }
+                        $data=Cirugia::whereIn('ID', $CirugiasID)->get()->toArray();
+
+                    }else if ($args["Filtro"] == "Medico") {
+                        
+                        $Medico=Medico::select('ID')->whereIn('Persona', $personas)->get();
+                        $MedicosID = array();
+                        foreach($Medico as $s){
+                            $MedicosID[]=$s->ID;
+                        }
+                        $data=Cirugia::whereIn('Medico', $MedicosID)->get()->toArray();
+
+                    }else if ($args["Filtro"] == "Especialidad") {
+                        $data=[];
+                    }
+                    return $data;
+                }else{
+                    return [];
+                }
+            }
+        ],
+        'ExamenesFiltro'=>[
+            'type'=>Type::listOf($ExamenesMedicosType),
+            'args'=>[
+                'Busqueda'=>Type::nonNull(Type::string()),
+                'Filtro'=>Type::nonNull(Type::string())
+            ],
+            'resolve'=>function($root,$args){
+                if (isset($args["Filtro"]) && isset($args["Busqueda"])) {
+
+                    $Persona=Persona::select('ID')->where('CI', 'like', '%'.$args["Busqueda"].'%')->get();
+                    $personas=array();
+                    foreach($Persona as $s){
+                        $personas[]=$s->ID;
+                    }
+
+                    $data=[];
+                    if ($args["Filtro"] == "Paciente") {
+
+                        $data=ExamenesMedicos::whereIn('Persona', $personas)->get()->toArray();
+
+                    }else if ($args["Filtro"] == "Medico") {
+                        
+                        $Medico=Medico::select('ID')->whereIn('Persona', $personas)->get();
+                        $MedicosID = array();
+                        foreach($Medico as $s){
+                            $MedicosID[]=$s->ID;
+                        }
+                        $data=ExamenesMedicos::whereIn('Medico', $MedicosID)->get()->toArray();
+
+                    }else if ($args["Filtro"] == "Especialidad") {
+                        $data=[];
+                    }
+                    return $data;
+                }else{
+                    return [];
+                }
+            }
+        ],
+        'ConsultasFiltro'=>[
+            'type'=>Type::listOf($ConsultaType),
+            'args'=>[
+                'Busqueda'=>Type::nonNull(Type::string()),
+                'Filtro'=>Type::nonNull(Type::string())
+            ],
+            'resolve'=>function($root,$args){
+                if (isset($args["Filtro"]) && isset($args["Busqueda"])) {
+
+                    $Persona=Persona::select('ID')->where('CI', 'like', '%'.$args["Busqueda"].'%')->get();
+                    $personas=array();
+                    foreach($Persona as $s){
+                        $personas[]=$s->ID;
+                    }
+
+                    $data=[];
+                    if ($args["Filtro"] == "Paciente") {
+
+                        $data=Consulta::whereIn('Persona', $personas)->get()->toArray();
+
+                    }else if ($args["Filtro"] == "Medico") {
+                        
+                        $Medico=Medico::select('ID')->whereIn('Persona', $personas)->get();
+                        $MedicosID = array();
+                        foreach($Medico as $s){
+                            $MedicosID[]=$s->ID;
+                        }
+                        $data=Consulta::whereIn('Medico', $MedicosID)->get()->toArray();
+
+                    }else if ($args["Filtro"] == "Especialidad") {
+                        $data=[];
+                    }
+                    return $data;
+                }else{
+                    return [];
+                }
             }
         ],
     ]
