@@ -298,7 +298,7 @@ $rootQuery=new ObjectType([
                         foreach($PersonaCirugia as $s){
                             $CirugiasID[]=$s->Cirugia;
                         }
-                        $data=Cirugia::whereIn('ID', $CirugiasID)->get()->toArray();
+                        $data=Cirugia::where('FechaEliminado', NULL)->whereIn('ID', $CirugiasID)->get()->toArray();
 
                     }else if ($args["Filtro"] == "Medico") {
                         
@@ -307,7 +307,7 @@ $rootQuery=new ObjectType([
                         foreach($Medico as $s){
                             $MedicosID[]=$s->ID;
                         }
-                        $data=Cirugia::whereIn('Medico', $MedicosID)->get()->toArray();
+                        $data=Cirugia::where('FechaEliminado', NULL)->whereIn('Medico', $MedicosID)->get()->toArray();
 
                     }else if ($args["Filtro"] == "Especialidad") {
                         $data=[];
@@ -336,7 +336,7 @@ $rootQuery=new ObjectType([
                     $data=[];
                     if ($args["Filtro"] == "Paciente") {
 
-                        $data=ExamenesMedicos::whereIn('Persona', $personas)->get()->toArray();
+                        $data=ExamenesMedicos::where('FechaEliminado', NULL)->whereIn('Persona', $personas)->get()->toArray();
 
                     }else if ($args["Filtro"] == "Medico") {
                         
@@ -345,7 +345,7 @@ $rootQuery=new ObjectType([
                         foreach($Medico as $s){
                             $MedicosID[]=$s->ID;
                         }
-                        $data=ExamenesMedicos::whereIn('Medico', $MedicosID)->get()->toArray();
+                        $data=ExamenesMedicos::where('FechaEliminado', NULL)->whereIn('Medico', $MedicosID)->get()->toArray();
 
                     }else if ($args["Filtro"] == "Especialidad") {
                         $data=[];
@@ -374,7 +374,7 @@ $rootQuery=new ObjectType([
                     $data=[];
                     if ($args["Filtro"] == "Paciente") {
 
-                        $data=Consulta::whereIn('Persona', $personas)->get()->toArray();
+                        $data=Consulta::where('FechaEliminado', NULL)->whereIn('Persona', $personas)->get()->toArray();
 
                     }else if ($args["Filtro"] == "Medico") {
                         
@@ -383,7 +383,7 @@ $rootQuery=new ObjectType([
                         foreach($Medico as $s){
                             $MedicosID[]=$s->ID;
                         }
-                        $data=Consulta::whereIn('Medico', $MedicosID)->get()->toArray();
+                        $data=Consulta::where('FechaEliminado', NULL)->whereIn('Medico', $MedicosID)->get()->toArray();
 
                     }else if ($args["Filtro"] == "Especialidad") {
                         $data=[];
