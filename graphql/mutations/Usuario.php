@@ -5,6 +5,7 @@ use App\Models\Persona;
 use App\Models\Usuario;
 use App\Models\Direccion;
 use GraphQL\Type\Definition\Type;
+use App\Models\UsuarioRol;
 
 function getUserIp(){
     $ipaddress = '';
@@ -37,13 +38,20 @@ $Usuario=[
             $cuenta=Usuario::where('Usuario',$args["Usuario"])->where('Pwd',$pwd)->first();
             $v=false;
             $id_cuenta=0;
+            $id_rol=0;
             if ($cuenta!=null) {
-                $v=true;
+                
                 if ($cuenta->FechaEliminado == NULL && $cuenta->State == 1) {
-                    $id_cuenta=$cuenta->ID;
+                    $roles_user = UsuarioRol::where("Usuario",$cuenta->ID)->first();
+                    if ($roles_user != null) {
+                        $v=true;
+                        $id_cuenta=$cuenta->ID;
+                        $id_rol = $roles_user->Rol;
+                    }
+                    
                 }
             }
-            return array("estado"=>$v,"id_cuenta"=>$id_cuenta);
+            return array("estado"=>$v,"id_cuenta"=>$id_cuenta, "id_rol"=>$id_rol);
         }
     ],
     'Registrar_Usuario'=>[
