@@ -25,7 +25,8 @@ $validacionLoginType=new ObjectType([
     'description' => 'Se valida el inicio al sistema',
     'fields'=>[
         'estado'=>Type::boolean(),
-        'id_cuenta'=>Type::int()
+        'id_cuenta'=>Type::int(),
+        'id_rol'=>Type::int()
     ]
 ]);
 
