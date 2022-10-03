@@ -48,7 +48,6 @@ $Usuario=[
                         $id_cuenta=$cuenta->ID;
                         $id_rol = $roles_user->Rol;
                     }
-                    
                 }
             }
             return array("estado"=>$v,"id_cuenta"=>$id_cuenta, "id_rol"=>$id_rol);
