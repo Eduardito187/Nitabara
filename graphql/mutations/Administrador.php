@@ -5,12 +5,17 @@ use App\Models\Cirugia;
 use App\Models\CirugiaPago;
 use App\Models\Consulta;
 use App\Models\ConsultaPago;
+use App\Models\Direccion;
 use App\Models\ExamenesMedicos;
 use App\Models\ExamenesPago;
 use App\Models\Pago;
+use App\Models\Persona;
 use App\Models\PersonaCirugia;
 use App\Models\PersonaConsulta;
 use App\Models\PersonaExamen;
+use App\Models\Rol;
+use App\Models\Usuario;
+use App\Models\UsuarioRol;
 use GraphQL\Type\Definition\Type;
 
 $Administrador=[
@@ -551,6 +556,69 @@ $Administrador=[
                 PersonaExamen::where('Examen', $ExamenesMedicos->ID)->update([
                     'FechaEliminado'=>$date_ahora
                 ]);
+            }
+
+            return array("response"=>true);
+        }
+    ],
+    'ListDeleteUsers'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::listOf(Type::int()))
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            foreach ($args["ID"] as $ID) {
+                $a=Usuario::find($ID);
+                if ($a!=null) {
+                    Usuario::where('ID', $ID)->update([
+                        'FechaEliminado'=>$date_ahora
+                    ]);
+                    $Persona= Persona::where("Usuario", $ID)->first();
+                    Direccion::where('ID', $Persona->Direccion)->update([
+                        'FechaEliminado'=>$date_ahora
+                    ]);
+                    Persona::where('Usuario', $ID)->update([
+                        'FechaEliminado'=>$date_ahora
+                    ]);
+                }
+            }
+            return array("response"=>true);
+        }
+    ],
+    'ListDeleteRoles'=>[
+        'type'=>$ResponseType,
+        'args'=>[
+            'ID'=>Type::nonNull(Type::listOf(Type::int()))
+        ],
+        'resolve'=>function($root,$args){
+            $date_ahora=date("Y-m-d h:i:s");
+            foreach ($args["ID"] as $ID) {
+                $a=Rol::find($ID);
+                if ($a!=null) {
+                    Rol::where('ID', $ID)->update([
+                        'FechaEliminado'=>$date_ahora
+                    ]);
+                    $roles_user = UsuarioRol::where("Rol",$ID)->get();
+                    foreach ($roles_user as $rol) {
+                        UsuarioRol::where('Rol', $rol->Rol)->where('Usuario', $rol->Usuario)->update([
+                            'FechaEliminado'=>$date_ahora
+                        ]);
+                        $user_a=Usuario::find($rol->Usuario);
+                        if ($user_a!=null) {
+                            Usuario::where('ID', $rol->Usuario)->update([
+                                'FechaEliminado'=>$date_ahora
+                            ]);
+                            $Persona= Persona::where("Usuario", $rol->Usuario)->first();
+                            Direccion::where('ID', $Persona->Direccion)->update([
+                                'FechaEliminado'=>$date_ahora
+                            ]);
+                            Persona::where('Usuario', $rol->Usuario)->update([
+                                'FechaEliminado'=>$date_ahora
+                            ]);
+                        }
+                    }
+                }
             }
 
             return array("response"=>true);
